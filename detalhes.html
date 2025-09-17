@@ -475,8 +475,8 @@
 
                 comprasSnapshot.forEach(compraDoc => {
                     const compra = compraDoc.data();
-                    if (!compra.dataCompra) return; 
-                    const dataCompra = compra.dataCompra.toDate();
+                    // FIX: Use current date as a fallback if server timestamp is pending
+                    const dataCompra = compra.dataCompra ? compra.dataCompra.toDate() : new Date(); 
                     
                     limiteUsado += compra.valorTotal;
 
