@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,48 +10,68 @@
     <style> 
         body { font-family: 'Inter', sans-serif; }
     </style>
+    <script>
+        // Aplica o tema imediatamente para evitar "flash" de cores
+        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark')
+        } else {
+            document.documentElement.classList.add('dark')
+        }
+    </script>
 </head>
-<body class="bg-gray-900 text-white">
-    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p>A carregar...</p></div>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
+    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p class="text-white">A carregar...</p></div>
 
     <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-cyan-400">Meu Painel Financeiro</h1>
-                <p class="text-gray-400">Olá, <span id="user-email"></span>!</p>
+                <h1 class="text-3xl font-bold text-cyan-600 dark:text-cyan-400">Meu Painel Financeiro</h1>
+                <p class="text-gray-600 dark:text-gray-400">Olá, <span id="user-email"></span>!</p>
             </div>
             <div class="flex items-center gap-4">
-                <a href="detalhes.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">Gerir Finanças &rarr;</a>
+                <a href="detalhes.html" class="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">Gerir Finanças &rarr;</a>
                 
                 <!-- Gamification Popover -->
                 <div class="relative">
                     <button id="toggle-gamification-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded-lg text-2xl leading-none flex items-center justify-center">🏆</button>
                     
-                    <div id="gamification-panel" class="hidden absolute right-0 mt-2 w-80 md:w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-30 p-4">
+                    <div id="gamification-panel" class="hidden absolute right-0 mt-2 w-80 md:w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-30 p-4">
                         <div class="space-y-4">
                              <!-- Níveis de Jornada -->
-                            <div class="bg-gray-700 p-4 rounded-lg">
+                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
                                 <h3 class="font-bold text-lg mb-2">📊 Níveis de Jornada</h3>
                                 <div class="flex items-center gap-4">
                                     <span id="journey-level-icon" class="text-4xl"></span>
                                     <div>
                                         <p id="journey-level-title" class="font-semibold"></p>
-                                        <p id="journey-level-message" class="text-sm text-gray-300 break-words"></p>
+                                        <p id="journey-level-message" class="text-sm text-gray-700 dark:text-gray-300 break-words"></p>
                                     </div>
                                 </div>
                             </div>
                             <!-- Conquistas de Economia -->
-                            <div class="bg-gray-700 p-4 rounded-lg">
+                            <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
                                 <h3 class="font-bold text-lg mb-2">🏆 Conquistas de Economia</h3>
                                 <div class="flex items-center gap-4">
                                     <span id="savings-level-icon" class="text-4xl"></span>
                                     <div>
                                         <p id="savings-level-title" class="font-semibold"></p>
-                                        <p id="savings-level-message" class="text-sm text-gray-300 break-words"></p>
+                                        <p id="savings-level-message" class="text-sm text-gray-700 dark:text-gray-300 break-words"></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Seletor de Tema -->
+                <div class="relative">
+                    <button id="theme-menu-button" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                    </button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20">
+                        <p class="p-3 text-sm font-semibold text-gray-500 dark:text-gray-400">Modo de Exibição</p>
+                        <button data-theme="dark" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Escuro</button>
+                        <button data-theme="light" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Claro</button>
                     </div>
                 </div>
 
@@ -61,42 +81,42 @@
 
         <!-- Navegação de Mês -->
         <div class="flex justify-center items-center gap-4 mb-8">
-            <button id="prev-month" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">&lt;</button>
+            <button id="prev-month" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">&lt;</button>
             <h2 id="current-month-year" class="text-2xl font-bold text-center"></h2>
-            <button id="next-month" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">&gt;</button>
+            <button id="next-month" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">&gt;</button>
         </div>
 
         <!-- Resumo Financeiro -->
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">Resumo Financeiro</h2>
-            <button id="toggle-resumo" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+            <button id="toggle-resumo" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
         </div>
         <section id="resumo-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-400 mb-2">Total de Receitas</h3>
-                <p id="total-receitas" class="text-4xl font-bold text-green-400">R$ 0,00</p>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Total de Receitas</h3>
+                <p id="total-receitas" class="text-4xl font-bold text-green-500 dark:text-green-400">R$ 0,00</p>
             </div>
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-400 mb-2">Total de Despesas</h3>
-                <p id="total-despesas" class="text-4xl font-bold text-red-400">R$ 0,00</p>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Total de Despesas</h3>
+                <p id="total-despesas" class="text-4xl font-bold text-red-500 dark:text-red-400">R$ 0,00</p>
             </div>
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-400 mb-2">Saldo do Mês</h3>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Saldo do Mês</h3>
                 <p id="saldo-mes" class="text-4xl font-bold">R$ 0,00</p>
             </div>
         </section>
         
         <!-- Cadastro de Renda -->
-        <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
              <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold">Adicionar Renda</h2>
-                <button id="toggle-renda" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                <button id="toggle-renda" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
             </div>
             <div id="renda-container">
                 <form id="form-add-receita" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-receita" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Salário" required></div>
-                    <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-receita" step="0.01" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="3000" required></div>
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                    <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-receita" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="Ex: Salário" required></div>
+                    <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-receita" step="0.01" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="3000" required></div>
+                    <button type="submit" class="bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
                 </form>
             </div>
         </section>
@@ -104,19 +124,19 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Coluna de Receitas e Despesas do Mês -->
             <div>
-                 <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                 <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold">Receitas do Mês</h3>
-                        <button id="toggle-lista-receitas" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                        <button id="toggle-lista-receitas" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-receitas-container">
                         <div id="lista-receitas" class="space-y-3"></div>
                     </div>
                 </section>
-                <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold">Despesas do Mês (Geral)</h3>
-                        <button id="toggle-lista-despesas" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                        <button id="toggle-lista-despesas" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-despesas-container">
                         <div id="lista-despesas-mes" class="space-y-3"></div>
@@ -125,19 +145,19 @@
             </div>
             <!-- Coluna de Faturas e Empréstimos -->
              <div>
-                <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                      <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold">Faturas de Cartão (Mês Atual)</h3>
-                        <button id="toggle-lista-faturas" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                        <button id="toggle-lista-faturas" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-faturas-container">
                         <div id="lista-faturas" class="space-y-3"></div>
                     </div>
                 </section>
-                <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                      <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold">Parcelas de Empréstimos (Mês Atual)</h3>
-                        <button id="toggle-lista-emprestimos" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                        <button id="toggle-lista-emprestimos" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-emprestimos-container">
                         <div id="lista-emprestimos" class="space-y-3"></div>
@@ -149,20 +169,20 @@
         <!-- Seção de Gráficos -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Gráfico de Composição -->
-            <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
+            <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold">Composição das Despesas</h2>
-                    <button id="toggle-pie-chart" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                    <button id="toggle-pie-chart" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
                 </div>
                 <div id="pie-chart-container" class="max-w-md mx-auto">
                     <canvas id="despesasChart"></canvas>
                 </div>
             </section>
             <!-- Gráfico de Evolução -->
-             <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
+             <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold">Evolução Mensal</h2>
-                    <button id="toggle-bar-chart" class="text-cyan-400 hover:text-cyan-300 text-sm">Ocultar</button>
+                    <button id="toggle-bar-chart" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
                 </div>
                 <div id="bar-chart-container">
                     <canvas id="evolucaoChart"></canvas>
@@ -231,6 +251,58 @@
             }
         });
         
+        function getChartFontColor() {
+            return document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'; // gray-200 for dark, gray-700 for light
+        }
+
+        function updateChartColors() {
+            const fontColor = getChartFontColor();
+            if (despesasChart) {
+                despesasChart.options.plugins.legend.labels.color = fontColor;
+                despesasChart.options.plugins.tooltip.titleColor = fontColor;
+                despesasChart.options.plugins.tooltip.bodyColor = fontColor;
+                despesasChart.update();
+            }
+            if (evolucaoChart) {
+                evolucaoChart.options.plugins.legend.labels.color = fontColor;
+                evolucaoChart.options.scales.x.ticks.color = fontColor;
+                evolucaoChart.options.scales.y.ticks.color = fontColor;
+                 evolucaoChart.options.plugins.tooltip.titleColor = fontColor;
+                evolucaoChart.options.plugins.tooltip.bodyColor = fontColor;
+                evolucaoChart.update();
+            }
+        }
+
+        function setupThemeSwitcher() {
+            const themeMenuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            const themeOptions = document.querySelectorAll('.theme-option');
+
+            themeMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                themeMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', () => {
+                themeMenu.classList.add('hidden');
+            });
+
+            themeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.dataset.theme;
+                    if (theme === 'light') {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                    themeMenu.classList.add('hidden');
+                    updateChartColors();
+                });
+            });
+        }
+        
         function updateMonthDisplay() {
             const monthYear = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
             document.getElementById('current-month-year').textContent = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
@@ -239,12 +311,12 @@
 
         function initializePieChart() {
             const ctx = document.getElementById('despesasChart').getContext('2d');
-            despesasChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Gerais', 'Faturas', 'Empréstimos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b'], borderColor: '#1f2937', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: 'white', font: { size: 14 } } } } } });
+            despesasChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Gerais', 'Faturas', 'Empréstimos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b'], borderColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: getChartFontColor(), font: { size: 14 } } } } } });
         }
 
         function initializeBarChart() {
             const ctx = document.getElementById('evolucaoChart').getContext('2d');
-            evolucaoChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [ { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.7)', borderColor: '#10b981', borderWidth: 1 }, { label: 'Despesas', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 1 } ] }, options: { responsive: true, scales: { y: { ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } }, plugins: { legend: { labels: { color: 'white' } } } } });
+            evolucaoChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [ { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.7)', borderColor: '#10b981', borderWidth: 1 }, { label: 'Despesas', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 1 } ] }, options: { responsive: true, scales: { y: { ticks: { color: getChartFontColor() } }, x: { ticks: { color: getChartFontColor() } } }, plugins: { legend: { labels: { color: getChartFontColor() } } } } });
         }
 
         async function checkUserActivity() {
@@ -284,7 +356,8 @@
             
             const gamificationBtn = document.getElementById('toggle-gamification-btn');
             const gamificationPanel = document.getElementById('gamification-panel');
-            gamificationBtn.addEventListener('click', () => {
+            gamificationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 gamificationPanel.classList.toggle('hidden');
             });
             document.addEventListener('click', (event) => {
@@ -306,6 +379,7 @@
 
             initializePieChart();
             initializeBarChart();
+            setupThemeSwitcher();
             checkUserActivity().then(() => {
                 updateMonthDisplay();
                 fetchEvolutionData();
@@ -368,37 +442,43 @@
 
             onSnapshot(query(collection(db, "users", currentUserId, "receitas"), where("data", ">=", inicioMes), where("data", "<=", fimMes)), s => {
                 const listaEl = document.getElementById('lista-receitas');
-                listaEl.innerHTML = s.empty ? '<p class="text-gray-500">Nenhuma receita este mês.</p>' : '';
+                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400">Nenhuma receita este mês.</p>' : '';
                 totalReceitas = 0;
-                s.docs.forEach(d => { totalReceitas += d.data().valor; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-700 p-2 rounded"><span>${d.data().descricao}</span><span class="font-semibold text-green-400">${formatarMoeda(d.data().valor)}</span></div>`; });
+                s.docs.forEach(d => { totalReceitas += d.data().valor; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded"><span>${d.data().descricao}</span><span class="font-semibold text-green-600 dark:text-green-400">${formatarMoeda(d.data().valor)}</span></div>`; });
                 updateTotals();
             });
 
             onSnapshot(query(collection(db, "users", currentUserId, "despesas"), where("data", ">=", inicioMes), where("data", "<=", fimMes)), s => {
                 const listaEl = document.getElementById('lista-despesas-mes');
-                listaEl.innerHTML = s.empty ? '<p class="text-gray-500">Nenhuma despesa este mês.</p>' : '';
+                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400">Nenhuma despesa este mês.</p>' : '';
                 totalDespesasGerais = 0;
-                s.docs.forEach(d => { totalDespesasGerais += d.data().valor; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-700 p-2 rounded"><span>${d.data().descricao}</span><span class="font-semibold text-red-400">${formatarMoeda(d.data().valor)}</span></div>`; });
+                s.docs.forEach(d => { totalDespesasGerais += d.data().valor; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded"><span>${d.data().descricao}</span><span class="font-semibold text-red-600 dark:text-red-400">${formatarMoeda(d.data().valor)}</span></div>`; });
                 updateTotals();
             });
 
             onSnapshot(query(collection(db, "users", currentUserId, "emprestimos")), s => {
                 const listaEl = document.getElementById('lista-emprestimos');
-                listaEl.innerHTML = s.empty ? '<p class="text-gray-500">Nenhum empréstimo ativo.</p>' : '';
+                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400">Nenhum empréstimo ativo.</p>' : '';
                 totalEmprestimos = 0;
-                s.docs.forEach(d => { totalEmprestimos += d.data().valorParcela; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-700 p-2 rounded"><span>${d.data().nome}</span><span class="font-semibold text-red-400">${formatarMoeda(d.data().valorParcela)}</span></div>`; });
+                s.docs.forEach(d => { totalEmprestimos += d.data().valorParcela; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded"><span>${d.data().nome}</span><span class="font-semibold text-red-600 dark:text-red-400">${formatarMoeda(d.data().valorParcela)}</span></div>`; });
                 updateTotals();
             });
 
             onSnapshot(query(collection(db, "users", currentUserId, "cartoes")), cartoesSnap => {
                 const listaEl = document.getElementById('lista-faturas');
-                listaEl.innerHTML = cartoesSnap.empty ? '<p class="text-gray-500">Nenhum cartão.</p>' : '';
+                const existingFaturas = new Set();
+                listaEl.querySelectorAll('[id^="fatura-"]').forEach(el => existingFaturas.add(el.id));
+
                 cartoesSnap.docs.forEach(cartaoDoc => {
                     const cartao = { id: cartaoDoc.id, ...cartaoDoc.data() };
+                    existingFaturas.delete(`fatura-${cartao.id}`);
+
                     onSnapshot(query(collection(db, `users/${currentUserId}/cartoes/${cartao.id}/compras`)), comprasSnap => {
                         let faturaCartao = 0;
                         comprasSnap.docs.forEach(compraDoc => {
-                            const compra = compraDoc.data(), dataCompra = compra.dataCompra.toDate(), valorParcela = compra.valorTotal / compra.parcelasTotal;
+                            const compra = compraDoc.data();
+                            if(!compra.dataCompra) return;
+                            const dataCompra = compra.dataCompra.toDate(), valorParcela = compra.valorTotal / compra.parcelasTotal;
                             for (let i = 0; i < compra.parcelasTotal; i++) {
                                 let mesVencimento = dataCompra.getMonth(), anoVencimento = dataCompra.getFullYear();
                                 if (dataCompra.getDate() > cartao.diaFechamento) { mesVencimento++; }
@@ -409,17 +489,25 @@
                         });
                         let el = document.getElementById(`fatura-${cartao.id}`);
                         if (!el) { el = document.createElement('div'); el.id = `fatura-${cartao.id}`; listaEl.appendChild(el); }
-                        el.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
-                        el.innerHTML = `<span>${cartao.nome}</span><span class="font-semibold text-red-400">${formatarMoeda(faturaCartao)}</span>`;
+                        el.className = 'flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded';
+                        el.innerHTML = `<span>${cartao.nome}</span><span class="font-semibold text-red-600 dark:text-red-400">${formatarMoeda(faturaCartao)}</span>`;
                         recalcularTotalFaturas();
                     });
                 });
-                if (cartoesSnap.empty) { recalcularTotalFaturas(); }
+                
+                existingFaturas.forEach(id => document.getElementById(id)?.remove());
+
+                if (cartoesSnap.empty) { 
+                    listaEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Nenhum cartão.</p>';
+                    recalcularTotalFaturas(); 
+                } else if(listaEl.querySelector('[id^="fatura-"]') === null && !cartoesSnap.empty) {
+                     listaEl.innerHTML = ''; // Limpa se não tiver faturas pra mostrar mas tiver cartões
+                }
             });
 
             function recalcularTotalFaturas() {
                 totalFaturas = 0;
-                document.querySelectorAll('#lista-faturas > div').forEach(el => {
+                document.querySelectorAll('#lista-faturas > div[id^="fatura-"]').forEach(el => {
                     const v = el.querySelector('span:last-child').textContent.replace(/[R$\s.]/g, '').replace(',', '.');
                     totalFaturas += parseFloat(v);
                 });
@@ -461,10 +549,12 @@
                 document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesas);
                 const saldoEl = document.getElementById('saldo-mes');
                 saldoEl.textContent = formatarMoeda(saldo);
-                saldoEl.className = `text-4xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`;
+                saldoEl.className = `text-4xl font-bold ${saldo >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`;
                 
                 if (despesasChart) {
                     despesasChart.data.datasets[0].data = [totalDespesasGerais, totalFaturas, totalEmprestimos];
+                    despesasChart.options.plugins.legend.labels.color = getChartFontColor();
+                    despesasChart.data.datasets[0].borderColor = document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff';
                     despesasChart.update();
                 }
                 
