@@ -8,76 +8,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style> 
         body { font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .tab.active { border-color: #06b6d4; color: #06b6d4; }
+        .tab-active { border-color: #22d3ee; color: #22d3ee; }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
     <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p>A carregar...</p></div>
 
-    <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-5xl hidden">
+    <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
-            <div><h1 class="text-3xl font-bold text-cyan-400">Gerir Finanças</h1></div>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">&larr; Voltar ao Painel</a>
-                <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Sair</button>
+            <div>
+                <h1 class="text-3xl font-bold text-cyan-400">Gerir Finanças</h1>
+                <p class="text-gray-400">Adicione e controle suas despesas, cartões e empréstimos.</p>
             </div>
+            <a href="index.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">&larr; Voltar ao Painel</a>
         </header>
 
         <!-- Abas de Navegação -->
-        <div class="mb-6 border-b border-gray-700">
+        <div class="border-b border-gray-700 mb-8">
             <nav class="flex space-x-8" aria-label="Tabs">
-                <button class="tab active py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500" data-tab="despesas">Despesas do Mês</button>
-                <button class="tab py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500" data-tab="cartoes">Cartões de Crédito</button>
-                <button class="tab py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500" data-tab="emprestimos">Empréstimos</button>
+                <button data-tab="despesas" class="tab-button tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">Despesas do Mês</button>
+                <button data-tab="cartoes" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200">Cartões de Crédito</button>
+                <button data-tab="emprestimos" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200">Empréstimos</button>
             </nav>
         </div>
 
         <!-- Conteúdo das Abas -->
-        <div id="despesas" class="tab-content active">
-             <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-                <h2 class="text-2xl font-bold mb-4">Adicionar Despesa</h2>
-                <form id="form-despesa" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-6">
-                    <div class="md:col-span-2"><label for="descricao-despesa" class="block mb-2 text-sm text-gray-400">Descrição</label><input type="text" id="descricao-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
-                    <div><label for="valor-despesa" class="block mb-2 text-sm text-gray-400">Valor (R$)</label><input type="number" id="valor-despesa" step="0.01" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
-                    <div><label for="tipo-despesa" class="block mb-2 text-sm text-gray-400">Tipo</label><select id="tipo-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg"><option value="variavel">Variável</option><option value="fixa">Fixa</option></select></div>
-                    <button type="submit" class="bg-red-500 hover:bg-red-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
-                </form>
-                <div id="lista-despesas" class="space-y-3"></div>
-            </section>
-        </div>
+        <main>
+            <!-- Aba Despesas -->
+            <div id="tab-content-despesas" class="tab-content">
+                <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Adicionar Despesa</h2>
+                    <form id="form-add-despesa" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                        <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Supermercado" required></div>
+                        <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-despesa" step="0.01" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="350.50" required></div>
+                        <div><label class="block text-sm mb-2">Tipo</label><select id="tipo-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg"><option value="variavel">Variável</option><option value="fixa">Fixa</option></select></div>
+                        <button type="submit" id="btn-submit-despesa" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                    </form>
+                     <button id="btn-cancel-edit-despesa" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
+                </section>
+                <section id="lista-despesas" class="space-y-4"></section>
+            </div>
 
-        <div id="cartoes" class="tab-content">
-            <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-                <h2 class="text-2xl font-bold mb-4">Adicionar Novo Cartão</h2>
-                <form id="form-add-cartao" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-                    <div class="md:col-span-2"><label class="block text-sm mb-2">Nome</label><input type="text" id="nome-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Nubank UV" required></div>
-                    <div><label class="block text-sm mb-2">Limite</label><input type="number" id="limite-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="5000" required></div>
-                    <div><label class="block text-sm mb-2">Dia Fecho</label><input type="number" id="fechamento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="20" required></div>
-                    <div><label class="block text-sm mb-2">Dia Vencimento</label><input type="number" id="vencimento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="27" required></div>
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
-                </form>
-            </section>
-            <div id="container-cartoes" class="space-y-6"></div>
-        </div>
-        
-        <div id="emprestimos" class="tab-content">
-             <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-                <h2 class="text-2xl font-bold mb-4">Adicionar Empréstimo ou Financiamento</h2>
-                <form id="form-add-emprestimo" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="nome-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Financiamento Carro" required></div>
-                    <div><label class="block text-sm mb-2">Valor Parcela</label><input type="number" id="valor-parcela-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
-                    <div><label class="block text-sm mb-2">Total de Parcelas</label><input type="number" id="total-parcelas-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
-                    <button type="submit" class="md:col-start-4 bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
-                </form>
-            </section>
-            <div id="container-emprestimos" class="space-y-6"></div>
-        </div>
+            <!-- Aba Cartões -->
+            <div id="tab-content-cartoes" class="tab-content hidden">
+                <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Adicionar Cartão de Crédito</h2>
+                    <form id="form-add-cartao" class="grid grid-cols-2 md:grid-cols-5 gap-4 items-end">
+                        <div><label class="block text-sm mb-2">Nome</label><input type="text" id="nome-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                        <div><label class="block text-sm mb-2">Banco</label><input type="text" id="banco-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                        <div><label class="block text-sm mb-2">Limite</label><input type="number" id="limite-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                        <div class="grid grid-cols-2 gap-2">
+                           <div><label class="block text-sm mb-2">Fech.</label><input type="number" id="fechamento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" min="1" max="31" required></div>
+                           <div><label class="block text-sm mb-2">Venc.</label><input type="number" id="vencimento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" min="1" max="31" required></div>
+                        </div>
+                        <button type="submit" id="btn-submit-cartao" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11 col-span-2 md:col-span-1">Adicionar</button>
+                    </form>
+                     <button id="btn-cancel-edit-cartao" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
+                </section>
+                <section id="lista-cartoes" class="space-y-8"></section>
+            </div>
 
+            <!-- Aba Empréstimos -->
+            <div id="tab-content-emprestimos" class="tab-content hidden">
+                 <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-2xl font-bold mb-4">Adicionar Empréstimo ou Financiamento</h2>
+                    <form id="form-add-emprestimo" class="grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
+                        <div><label class="block text-sm mb-2">Tipo</label><select id="tipo-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg"><option value="emprestimo">Empréstimo Pessoal</option><option value="financiamento">Financiamento</option></select></div>
+                        <div><label class="block text-sm mb-2">Descrição</label><input type="text" id="nome-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Finan. Carro" required></div>
+                        <div><label class="block text-sm mb-2">Valor Parcela</label><input type="number" step="0.01" id="valor-parcela-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                        <button type="submit" id="btn-submit-emprestimo" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                    </form>
+                     <button id="btn-cancel-edit-emprestimo" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
+                </section>
+                <section id="lista-emprestimos" class="space-y-4"></section>
+            </div>
+        </main>
     </div>
 
-    <!-- CONFIGURAÇÃO DO FIREBASE -->
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyAvUqbV2e0ewur3G7VQExREDuWbopb6pNU",
@@ -89,292 +96,428 @@
         measurementId: "G-F1JCZNV7BX"
       };
     </script>
-    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, query, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, setDoc, getDoc, serverTimestamp, updateDoc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         let currentUserId = null;
+        let editingDespesaId = null;
+        let editingCartaoId = null;
+        let editingEmprestimoId = null;
+
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         
+        // Autenticação e Setup da Página
         onAuthStateChanged(auth, user => {
             if (user) {
                 currentUserId = user.uid;
-                setupPage();
+                setupEventListeners();
+                loadAllData();
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('app-content').classList.remove('hidden');
             } else {
                 window.location.href = 'login.html';
             }
         });
-
-        function setupPage() {
-            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
+        
+        function setupEventListeners() {
+            // Navegação por Abas
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('text-gray-400', 'border-transparent');
+                    });
+                    button.classList.add('tab-active');
+                    button.classList.remove('text-gray-400', 'border-transparent');
                     
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById(tab.dataset.tab).classList.add('active');
+                    tabContents.forEach(content => content.classList.add('hidden'));
+                    document.getElementById(`tab-content-${button.dataset.tab}`).classList.remove('hidden');
                 });
             });
 
-            // Lógica dos formulários
-            const formDespesa = document.getElementById('form-despesa');
-            formDespesa.addEventListener('submit', e => {
-                e.preventDefault();
-                const ref = collection(db, "users", currentUserId, "despesas");
-                addDoc(ref, {
-                    descricao: formDespesa['descricao-despesa'].value,
-                    valor: parseFloat(formDespesa['valor-despesa'].value),
-                    tipo: formDespesa['tipo-despesa'].value,
-                    data: new Date()
-                });
-                formDespesa.reset();
-            });
+            // Forms de Adicionar/Editar
+            handleDespesaForm();
+            handleCartaoForm();
+            handleEmprestimoForm();
 
-            const formCartao = document.getElementById('form-add-cartao');
-            formCartao.addEventListener('submit', e => {
-                 e.preventDefault();
-                const ref = collection(db, "users", currentUserId, "cartoes");
-                 addDoc(ref, {
-                    nome: formCartao['nome-cartao'].value,
-                    limite: parseFloat(formCartao['limite-cartao'].value),
-                    diaFechamento: parseInt(formCartao['fechamento-cartao'].value),
-                    diaVencimento: parseInt(formCartao['vencimento-cartao'].value),
-                });
-                formCartao.reset();
-            });
-
-            const formEmprestimo = document.getElementById('form-add-emprestimo');
-            formEmprestimo.addEventListener('submit', e => {
-                e.preventDefault();
-                const ref = collection(db, "users", currentUserId, "emprestimos");
-                addDoc(ref, {
-                    nome: formEmprestimo['nome-emprestimo'].value,
-                    valorParcela: parseFloat(formEmprestimo['valor-parcela-emprestimo'].value),
-                    parcelasTotal: parseInt(formEmprestimo['total-parcelas-emprestimo'].value),
-                    parcelasPagas: 0,
-                    dataInicio: new Date()
-                });
-                formEmprestimo.reset();
-            });
-            
-            // Listeners para os dados
-            listenToDespesas();
-            listenToCartoes();
-            listenToEmprestimos();
+            // Handlers de cliques para Editar e Excluir
+            document.getElementById('lista-despesas').addEventListener('click', handleListActions);
+            document.getElementById('lista-cartoes').addEventListener('click', handleListActions);
+            document.getElementById('lista-emprestimos').addEventListener('click', handleListActions);
         }
 
-        function listenToDespesas() {
-            const despesasRef = collection(db, "users", currentUserId, "despesas");
-            onSnapshot(query(despesasRef), snapshot => {
-                const despesas = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                const listaEl = document.getElementById('lista-despesas');
-                listaEl.innerHTML = despesas.length ? '' : '<p class="text-gray-500">Nenhuma despesa registada.</p>';
-                
-                despesas.sort((a, b) => b.data.toMillis() - a.data.toMillis());
-                despesas.forEach(despesa => {
-                    const despesaEl = document.createElement('div');
-                    despesaEl.className = 'flex justify-between items-center bg-gray-700 p-3 rounded-lg';
-                    const tipoClasse = despesa.tipo === 'fixa' ? 'text-yellow-400' : 'text-blue-400';
+        function loadAllData() {
+            loadDespesas();
+            loadCartoes();
+            loadEmprestimos();
+        }
 
-                    despesaEl.innerHTML = `
+        // --- LÓGICA DE DESPESAS ---
+        function handleDespesaForm() {
+            const form = document.getElementById('form-add-despesa');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    descricao: form['descricao-despesa'].value,
+                    valor: parseFloat(form['valor-despesa'].value),
+                    tipo: form['tipo-despesa'].value,
+                    data: new Date()
+                };
+                
+                if (editingDespesaId) {
+                    await updateDoc(doc(db, "users", currentUserId, "despesas", editingDespesaId), data);
+                } else {
+                    await addDoc(collection(db, "users", currentUserId, "despesas"), data);
+                }
+                resetDespesaForm();
+            });
+
+            document.getElementById('btn-cancel-edit-despesa').addEventListener('click', resetDespesaForm);
+        }
+        
+        function resetDespesaForm() {
+            document.getElementById('form-add-despesa').reset();
+            document.getElementById('btn-submit-despesa').textContent = 'Adicionar';
+            document.getElementById('btn-cancel-edit-despesa').classList.add('hidden');
+            editingDespesaId = null;
+        }
+
+        function loadDespesas() {
+            onSnapshot(query(collection(db, "users", currentUserId, "despesas")), (snapshot) => {
+                const listaEl = document.getElementById('lista-despesas');
+                listaEl.innerHTML = '';
+                if (snapshot.empty) {
+                    listaEl.innerHTML = '<p class="text-center text-gray-500">Nenhuma despesa adicionada.</p>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const el = document.createElement('div');
+                    el.className = 'bg-gray-700 p-4 rounded-lg flex justify-between items-center';
+                    el.innerHTML = `
                         <div>
-                            <p class="font-semibold">${despesa.descricao}</p>
-                            <p class="text-sm ${tipoClasse}">${despesa.tipo.charAt(0).toUpperCase() + despesa.tipo.slice(1)}</p>
+                            <p class="font-bold">${d.descricao} - <span class="capitalize text-cyan-400 font-normal">${d.tipo}</span></p>
+                            <p class="text-red-400">${formatarMoeda(d.valor)}</p>
                         </div>
-                        <div class="text-right">
-                           <p class="font-bold text-red-400">${formatarMoeda(despesa.valor)}</p>
-                           <button data-id="${despesa.id}" class="text-xs text-gray-500 hover:text-red-400 js-delete-despesa">Excluir</button>
+                        <div class="flex gap-2">
+                           <button data-id="${doc.id}" data-action="edit" data-type="despesa" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
+                           <button data-id="${doc.id}" data-action="delete" data-type="despesa" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
                         </div>
                     `;
-                    listaEl.appendChild(despesaEl);
-                    despesaEl.querySelector('.js-delete-despesa').addEventListener('click', () => {
-                        deleteDoc(doc(db, "users", currentUserId, "despesas", despesa.id));
-                    });
+                    listaEl.appendChild(el);
                 });
             });
         }
         
-        function listenToCartoes() {
-            const cartoesRef = collection(db, "users", currentUserId, "cartoes");
-            onSnapshot(query(cartoesRef), snapshot => {
-                const containerEl = document.getElementById('container-cartoes');
-                containerEl.innerHTML = '';
-                snapshot.docs.forEach(cartaoDoc => {
-                    const cartao = { id: cartaoDoc.id, ...cartaoDoc.data() };
-                    const cartaoEl = document.createElement('div');
-                    cartaoEl.className = 'bg-gray-800 p-6 rounded-xl shadow-lg';
-                    cartaoEl.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-2xl font-bold text-cyan-400">${cartao.nome}</h3>
-                                <p class="text-sm text-gray-400">Fecha dia ${cartao.diaFechamento} | Vence dia ${cartao.diaVencimento}</p>
-                            </div>
-                            <button data-id="${cartao.id}" class="text-red-500 hover:text-red-400 text-sm js-delete-cartao">Excluir</button>
-                        </div>
+        async function editDespesa(id) {
+            const docRef = doc(db, "users", currentUserId, "despesas", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const form = document.getElementById('form-add-despesa');
+                form['descricao-despesa'].value = data.descricao;
+                form['valor-despesa'].value = data.valor;
+                form['tipo-despesa'].value = data.tipo;
 
-                        <div class="space-y-2 mb-4">
-                            <div class="flex justify-between font-bold">
-                                <span>Fatura Atual: <span id="fatura-total-${cartao.id}" class="text-red-400">${formatarMoeda(0)}</span></span>
-                                <span>Disponível: <span id="limite-disponivel-${cartao.id}" class="text-green-400">${formatarMoeda(cartao.limite)}</span></span>
-                            </div>
-                            <div class="w-full bg-gray-700 rounded-full h-4">
-                                <div id="limite-progress-${cartao.id}" class="bg-red-500 h-4 rounded-full" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="border-t border-gray-700 pt-4">
-                             <h4 class="text-lg font-semibold mb-3">Lançar Compra</h4>
-                             <form id="form-compra-${cartao.id}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                                <div class="md:col-span-2"><label class="block text-sm mb-1 text-gray-400">Descrição</label><input type="text" name="descricao" class="bg-gray-700 w-full p-2 rounded-lg" required></div>
-                                <div><label class="block text-sm mb-1 text-gray-400">Valor Total</label><input type="number" step="0.01" name="valor" class="bg-gray-700 w-full p-2 rounded-lg" required></div>
-                                <div><label class="block text-sm mb-1 text-gray-400">Parcelas</label><input type="number" name="parcelas" value="1" min="1" class="bg-gray-700 w-full p-2 rounded-lg" required></div>
-                                <button type="submit" class="md:col-start-4 bg-cyan-500 hover:bg-cyan-600 font-bold py-2 px-4 rounded-lg h-10">Lançar</button>
-                             </form>
-                        </div>
-                        
-                        <div class="border-t border-gray-700 mt-6 pt-4">
-                            <h4 class="text-lg font-semibold mb-3">Fatura Atual</h4>
-                            <div id="fatura-detalhes-${cartao.id}" class="space-y-2">
-                               <p class="text-gray-500">Nenhuma compra na fatura atual.</p>
-                            </div>
-                        </div>
-                    `;
-                    containerEl.appendChild(cartaoEl);
-
-                    cartaoEl.querySelector('.js-delete-cartao').addEventListener('click', () => {
-                        deleteDoc(doc(db, "users", currentUserId, "cartoes", cartao.id));
-                    });
-
-                    const formCompra = document.getElementById(`form-compra-${cartao.id}`);
-                    formCompra.addEventListener('submit', e => {
-                        e.preventDefault();
-                        const comprasRef = collection(db, "users", currentUserId, "cartoes", cartao.id, "compras");
-                        addDoc(comprasRef, {
-                            descricao: formCompra.descricao.value,
-                            valorTotal: parseFloat(formCompra.valor.value),
-                            parcelasTotal: parseInt(formCompra.parcelas.value),
-                            dataCompra: new Date()
-                        });
-                        formCompra.reset();
-                    });
-                    
-                    listenToComprasDoCartao(cartao);
-                });
-            });
+                editingDespesaId = id;
+                document.getElementById('btn-submit-despesa').textContent = 'Salvar Alterações';
+                document.getElementById('btn-cancel-edit-despesa').classList.remove('hidden');
+                form.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
-        function listenToComprasDoCartao(cartao) {
-            const comprasRef = collection(db, "users", currentUserId, "cartoes", cartao.id, "compras");
-            onSnapshot(query(comprasRef), snapshot => {
-                const compras = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                renderizarDetalhesCartao(cartao, compras);
-            });
-        }
-
-        function listenToEmprestimos() {
-            const emprestimosRef = collection(db, "users", currentUserId, "emprestimos");
-            onSnapshot(query(emprestimosRef), snapshot => {
-                const containerEl = document.getElementById('container-emprestimos');
-                containerEl.innerHTML = snapshot.empty ? '<p class="text-gray-500 text-center">Nenhum empréstimo cadastrado.</p>' : '';
-                snapshot.docs.forEach(doc => {
-                    const emprestimo = { id: doc.id, ...doc.data() };
-                    const percentualConcluido = (emprestimo.parcelasPagas / emprestimo.parcelasTotal) * 100;
-
-                    const emprestimoEl = document.createElement('div');
-                    emprestimoEl.className = 'bg-gray-800 p-6 rounded-xl shadow-lg';
-                    emprestimoEl.innerHTML = `
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-xl font-bold">${emprestimo.nome}</h3>
-                                <p class="text-cyan-400 font-semibold">${formatarMoeda(emprestimo.valorParcela)} / mês</p>
-                            </div>
-                            <button data-id="${emprestimo.id}" class="text-red-500 hover:text-red-400 text-sm js-delete-emprestimo">Excluir</button>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-sm text-gray-400 mb-1">
-                                <span>Progresso</span>
-                                <span>${emprestimo.parcelasPagas} / ${emprestimo.parcelasTotal} parcelas</span>
-                            </div>
-                            <div class="w-full bg-gray-700 rounded-full h-3">
-                                <div class="bg-green-500 h-3 rounded-full" style="width: ${percentualConcluido}%;"></div>
-                            </div>
-                        </div>
-                    `;
-                    containerEl.appendChild(emprestimoEl);
-                    emprestimoEl.querySelector('.js-delete-emprestimo').addEventListener('click', () => {
-                        deleteDoc(doc(db, "users", currentUserId, "emprestimos", emprestimo.id));
-                    });
-                });
-            });
-        }
-
-        function renderizarDetalhesCartao(cartao, compras) {
-            const hoje = new Date();
-            const mesAtual = hoje.getMonth();
-            const anoAtual = hoje.getFullYear();
-
-            let totalFaturaAtual = 0;
-            let totalGasto = 0;
-            const detalhesFaturaEl = document.getElementById(`fatura-detalhes-${cartao.id}`);
-            detalhesFaturaEl.innerHTML = '';
-
-            compras.forEach(compra => {
-                const dataCompra = compra.dataCompra.toDate();
-                const valorParcela = compra.valorTotal / compra.parcelasTotal;
+        // --- LÓGICA DE CARTÕES ---
+        function handleCartaoForm() {
+            const form = document.getElementById('form-add-cartao');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    nome: form['nome-cartao'].value,
+                    banco: form['banco-cartao'].value,
+                    limite: parseFloat(form['limite-cartao'].value),
+                    diaFechamento: parseInt(form['fechamento-cartao'].value),
+                    diaVencimento: parseInt(form['vencimento-cartao'].value)
+                };
                 
-                for (let i = 0; i < compra.parcelasTotal; i++) {
-                    let mesVencimentoParcela = dataCompra.getMonth();
-                    let anoVencimentoParcela = dataCompra.getFullYear();
-
-                    if(dataCompra.getDate() > cartao.diaFechamento) {
-                       mesVencimentoParcela += 1;
-                    }
-                    mesVencimentoParcela += i;
-
-                    while(mesVencimentoParcela > 11) {
-                        mesVencimentoParcela -= 12;
-                        anoVencimentoParcela += 1;
-                    }
-                    
-                    if (mesVencimentoParcela === mesAtual && anoVencimentoParcela === anoAtual) {
-                        totalFaturaAtual += valorParcela;
-                        const itemCompraEl = document.createElement('div');
-                        itemCompraEl.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
-                        itemCompraEl.innerHTML = `
-                           <span>${compra.descricao} ${compra.parcelasTotal > 1 ? `(${i + 1}/${compra.parcelasTotal})` : ''}</span>
-                           <span class="font-semibold">${formatarMoeda(valorParcela)}</span>
-                        `;
-                        detalhesFaturaEl.appendChild(itemCompraEl);
-                    }
-                    
-                    const dataVencimentoFaturaParcela = new Date(anoVencimentoParcela, mesVencimentoParcela, cartao.diaVencimento);
-                     if(dataVencimentoFaturaParcela >= hoje || (dataVencimentoFaturaParcela.getMonth() === mesAtual && dataVencimentoFaturaParcela.getFullYear() === anoAtual) ) {
-                        totalGasto += valorParcela;
-                    }
+                if (editingCartaoId) {
+                    await updateDoc(doc(db, "users", currentUserId, "cartoes", editingCartaoId), data);
+                } else {
+                    await addDoc(collection(db, "users", currentUserId, "cartoes"), data);
                 }
+                resetCartaoForm();
             });
 
-            if(detalhesFaturaEl.innerHTML === '') {
-                 detalhesFaturaEl.innerHTML = '<p class="text-gray-500">Nenhuma compra na fatura atual.</p>';
+             document.getElementById('btn-cancel-edit-cartao').addEventListener('click', resetCartaoForm);
+        }
+        
+        function resetCartaoForm() {
+            document.getElementById('form-add-cartao').reset();
+            document.getElementById('btn-submit-cartao').textContent = 'Adicionar';
+            document.getElementById('btn-cancel-edit-cartao').classList.add('hidden');
+            editingCartaoId = null;
+        }
+
+        function loadCartoes() {
+             onSnapshot(query(collection(db, "users", currentUserId, "cartoes")), (snapshot) => {
+                const listaEl = document.getElementById('lista-cartoes');
+                listaEl.innerHTML = '';
+                 if (snapshot.empty) {
+                    listaEl.innerHTML = '<p class="text-center text-gray-500">Nenhum cartão adicionado.</p>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    renderCartao(doc);
+                });
+            });
+        }
+
+        async function editCartao(id) {
+            const docRef = doc(db, "users", currentUserId, "cartoes", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const form = document.getElementById('form-add-cartao');
+                form['nome-cartao'].value = data.nome;
+                form['banco-cartao'].value = data.banco;
+                form['limite-cartao'].value = data.limite;
+                form['fechamento-cartao'].value = data.diaFechamento;
+                form['vencimento-cartao'].value = data.diaVencimento;
+
+                editingCartaoId = id;
+                document.getElementById('btn-submit-cartao').textContent = 'Salvar Alterações';
+                document.getElementById('btn-cancel-edit-cartao').classList.remove('hidden');
+                form.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- LÓGICA DE EMPRÉSTIMOS ---
+        function handleEmprestimoForm() {
+            const form = document.getElementById('form-add-emprestimo');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    tipo: form['tipo-emprestimo'].value,
+                    nome: form['nome-emprestimo'].value,
+                    valorParcela: parseFloat(form['valor-parcela-emprestimo'].value)
+                };
+                 if (editingEmprestimoId) {
+                    await updateDoc(doc(db, "users", currentUserId, "emprestimos", editingEmprestimoId), data);
+                } else {
+                    await addDoc(collection(db, "users", currentUserId, "emprestimos"), data);
+                }
+                resetEmprestimoForm();
+            });
+
+            document.getElementById('btn-cancel-edit-emprestimo').addEventListener('click', resetEmprestimoForm);
+        }
+
+        function resetEmprestimoForm() {
+            document.getElementById('form-add-emprestimo').reset();
+            document.getElementById('btn-submit-emprestimo').textContent = 'Adicionar';
+            document.getElementById('btn-cancel-edit-emprestimo').classList.add('hidden');
+            editingEmprestimoId = null;
+        }
+
+        function loadEmprestimos() {
+             onSnapshot(query(collection(db, "users", currentUserId, "emprestimos")), (snapshot) => {
+                const listaEl = document.getElementById('lista-emprestimos');
+                listaEl.innerHTML = '';
+                if (snapshot.empty) {
+                    listaEl.innerHTML = '<p class="text-center text-gray-500">Nenhum empréstimo adicionado.</p>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const e = doc.data();
+                    const tipoTexto = e.tipo === 'emprestimo' ? 'Empréstimo' : 'Financiamento';
+                    const el = document.createElement('div');
+                    el.className = 'bg-gray-700 p-4 rounded-lg flex justify-between items-center';
+                    el.innerHTML = `
+                        <div>
+                            <p class="font-bold">${e.nome} <span class="text-sm font-normal text-cyan-400">(${tipoTexto})</span></p>
+                            <p class="text-red-400">${formatarMoeda(e.valorParcela)} / mês</p>
+                        </div>
+                         <div class="flex gap-2">
+                           <button data-id="${doc.id}" data-action="edit" data-type="emprestimo" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
+                           <button data-id="${doc.id}" data-action="delete" data-type="emprestimo" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
+                        </div>
+                    `;
+                    listaEl.appendChild(el);
+                });
+            });
+        }
+        
+        async function editEmprestimo(id) {
+            const docRef = doc(db, "users", currentUserId, "emprestimos", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const form = document.getElementById('form-add-emprestimo');
+                form['tipo-emprestimo'].value = data.tipo;
+                form['nome-emprestimo'].value = data.nome;
+                form['valor-parcela-emprestimo'].value = data.valorParcela;
+
+                editingEmprestimoId = id;
+                document.getElementById('btn-submit-emprestimo').textContent = 'Salvar Alterações';
+                document.getElementById('btn-cancel-edit-emprestimo').classList.remove('hidden');
+                form.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // --- AÇÕES GERAIS DA LISTA (EDITAR/EXCLUIR) ---
+        async function handleListActions(e) {
+            const target = e.target.closest('button');
+            if (!target) return;
+            
+            const { id, action, type } = target.dataset;
+            if (!id || !action || !type) return;
+
+            if (action === 'delete') {
+                if (confirm(`Tem certeza que deseja excluir este item?`)) {
+                    await deleteDoc(doc(db, "users", currentUserId, `${type}s`, id));
+                }
+            } else if (action === 'edit') {
+                if (type === 'despesa') editDespesa(id);
+                if (type === 'cartao') editCartao(id);
+                if (type === 'emprestimo') editEmprestimo(id);
+            } else if (action === 'add-compra') {
+                const form = document.getElementById(`form-compra-${id}`);
+                const data = {
+                    descricao: form['descricao-compra'].value,
+                    valorTotal: parseFloat(form['valor-compra'].value),
+                    parcelasTotal: parseInt(form['parcelas-compra'].value) || 1,
+                    dataCompra: serverTimestamp()
+                };
+                await addDoc(collection(db, `users/${currentUserId}/cartoes/${id}/compras`), data);
+                form.reset();
+            } else if (action === 'delete-compra') {
+                 if (confirm(`Tem certeza que deseja excluir esta compra?`)) {
+                    const { cartaoId } = target.dataset;
+                    await deleteDoc(doc(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`, id));
+                 }
+            }
+        }
+
+        // --- RENDERIZAÇÃO COMPLEXA (CARTÃO + COMPRAS) ---
+        function renderCartao(cartaoDoc) {
+            const listaEl = document.getElementById('lista-cartoes');
+            const cartao = cartaoDoc.data();
+            const cartaoId = cartaoDoc.id;
+
+            let cartaoContainer = document.getElementById(`cartao-${cartaoId}`);
+            if (!cartaoContainer) {
+                cartaoContainer = document.createElement('div');
+                cartaoContainer.id = `cartao-${cartaoId}`;
+                listaEl.appendChild(cartaoContainer);
             }
             
-            const limiteDisponivel = cartao.limite - totalGasto;
-            const percentualUso = (totalGasto / cartao.limite) * 100;
+            cartaoContainer.className = "bg-gray-700 p-6 rounded-xl shadow-lg";
+            cartaoContainer.innerHTML = `
+                <div class="flex flex-wrap justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold">${cartao.nome} - ${cartao.banco}</h3>
+                        <p class="text-sm text-gray-400">Fecha dia ${cartao.diaFechamento} | Vence dia ${cartao.diaVencimento}</p>
+                    </div>
+                    <div class="flex gap-2 mt-2 md:mt-0">
+                         <button data-id="${cartaoId}" data-action="edit" data-type="cartao" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
+                         <button data-id="${cartaoId}" data-action="delete" data-type="cartao" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                     <div class="flex justify-between text-sm mb-1">
+                        <span id="fatura-atual-${cartaoId}">Fatura Atual: R$ 0,00</span>
+                        <span>Limite: ${formatarMoeda(cartao.limite)}</span>
+                     </div>
+                     <div class="w-full bg-gray-600 rounded-full h-2.5"><div id="limite-usado-bar-${cartaoId}" class="bg-cyan-500 h-2.5 rounded-full" style="width: 0%"></div></div>
+                     <p id="limite-disponivel-${cartaoId}" class="text-right text-sm mt-1">Disponível: ${formatarMoeda(cartao.limite)}</p>
+                </div>
+                <div class="border-t border-gray-600 pt-4">
+                     <h4 class="font-bold mb-2">Adicionar Compra</h4>
+                     <form id="form-compra-${cartaoId}" class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                        <div class="sm:col-span-2"><label class="block text-sm mb-1">Descrição</label><input type="text" name="descricao-compra" class="bg-gray-600 w-full p-2 rounded-lg" required></div>
+                        <div><label class="block text-sm mb-1">Valor Total</label><input type="number" step="0.01" name="valor-compra" class="bg-gray-600 w-full p-2 rounded-lg" required></div>
+                        <div class="flex items-end gap-2">
+                           <div class="flex-grow"><label class="block text-sm mb-1">Parcelas</label><input type="number" name="parcelas-compra" class="bg-gray-600 w-full p-2 rounded-lg" min="1" placeholder="1"></div>
+                           <button type="button" data-id="${cartaoId}" data-action="add-compra" class="bg-blue-500 hover:bg-blue-600 font-bold p-2 rounded-lg h-10 w-10 text-xl">+</button>
+                        </div>
+                     </form>
+                </div>
+                 <div class="border-t border-gray-600 mt-4 pt-4">
+                     <h4 class="font-bold mb-2">Compras na Fatura Atual</h4>
+                     <div id="lista-compras-${cartaoId}" class="space-y-2"></div>
+                 </div>
+            `;
 
-            document.getElementById(`fatura-total-${cartao.id}`).textContent = formatarMoeda(totalFaturaAtual);
-            document.getElementById(`limite-disponivel-${cartao.id}`).textContent = formatarMoeda(limiteDisponivel);
-            document.getElementById(`limite-progress-${cartao.id}`).style.width = `${Math.min(percentualUso, 100)}%`;
+            onSnapshot(query(collection(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`)), (comprasSnapshot) => {
+                const listaComprasEl = document.getElementById(`lista-compras-${cartaoId}`);
+                listaComprasEl.innerHTML = '';
+                
+                let faturaAtual = 0;
+                let limiteUsado = 0;
+                const mesAtual = new Date().getMonth();
+                const anoAtual = new Date().getFullYear();
+
+                comprasSnapshot.forEach(compraDoc => {
+                    const compra = compraDoc.data();
+                    const dataCompra = compra.dataCompra.toDate();
+                    
+                    // Calcula limite usado total
+                    limiteUsado += compra.valorTotal;
+
+                    // Calcula valor na fatura atual
+                    const valorParcela = compra.valorTotal / compra.parcelasTotal;
+                    for (let i = 0; i < compra.parcelasTotal; i++) {
+                        let mesVencimento = dataCompra.getMonth();
+                        let anoVencimento = dataCompra.getFullYear();
+                        
+                        if (dataCompra.getDate() > cartao.diaFechamento) {
+                            mesVencimento++;
+                        }
+                        mesVencimento += i;
+                        
+                        while(mesVencimento > 11) {
+                            mesVencimento -= 12;
+                            anoVencimento++;
+                        }
+                        
+                        if (mesVencimento === mesAtual && anoVencimento === anoAtual) {
+                            faturaAtual += valorParcela;
+                            
+                            const compraEl = document.createElement('div');
+                            compraEl.className = 'flex justify-between items-center bg-gray-600 p-2 rounded text-sm';
+                            compraEl.innerHTML = `
+                                <div>
+                                    <span>${compra.descricao}</span>
+                                    <span class="text-gray-400 ml-2">(Parc. ${i + 1}/${compra.parcelasTotal})</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span>${formatarMoeda(valorParcela)}</span>
+                                    <button data-id="${compraDoc.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="text-red-400 hover:text-red-300">✖</button>
+                                </div>
+                            `;
+                            listaComprasEl.appendChild(compraEl);
+                        }
+                    }
+                });
+                
+                if (listaComprasEl.innerHTML === '') {
+                    listaComprasEl.innerHTML = '<p class="text-sm text-gray-500">Nenhuma compra na fatura deste mês.</p>';
+                }
+
+                // Atualiza UI do cartão
+                document.getElementById(`fatura-atual-${cartaoId}`).textContent = `Fatura Atual: ${formatarMoeda(faturaAtual)}`;
+                const limiteDisponivel = cartao.limite - limiteUsado;
+                document.getElementById(`limite-disponivel-${cartaoId}`).textContent = `Disponível: ${formatarMoeda(limiteDisponivel)}`;
+                const percentualUsado = (limiteUsado / cartao.limite) * 100;
+                document.getElementById(`limite-usado-bar-${cartaoId}`).style.width = `${Math.min(percentualUsado, 100)}%`;
+            });
         }
 
     </script>
