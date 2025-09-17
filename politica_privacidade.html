@@ -10,7 +10,7 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
     <script>
-        if (localStorage.getItem('theme') === 'light') {
+        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
             document.documentElement.classList.remove('dark')
         } else {
             document.documentElement.classList.add('dark')
@@ -19,85 +19,76 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <header class="mb-8 text-center">
+        <header class="text-center mb-10">
             <h1 class="text-4xl font-bold text-cyan-600 dark:text-cyan-400">Política de Privacidade</h1>
             <p class="text-gray-600 dark:text-gray-400 mt-2">Última atualização: 17 de setembro de 2025</p>
         </header>
 
         <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg space-y-6">
-            <p>Bem-vindo(a) ao nosso sistema de Controle Financeiro. A sua privacidade é de extrema importância para nós. Esta Política de Privacidade explica quais dados coletamos, como os utilizamos e quais são os seus direitos em relação a eles.</p>
+            <section>
+                <h2 class="text-2xl font-bold mb-3">1. Introdução</h2>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    Bem-vindo(a) ao nosso sistema de Controle Financeiro. A sua privacidade é a nossa maior prioridade. Esta Política de Privacidade explica como suas informações são gerenciadas dentro da nossa aplicação. Nosso compromisso é com a total transparência e segurança dos seus dados, que são de sua exclusividade.
+                </p>
+            </section>
 
             <section>
-                <h2 class="text-2xl font-bold mb-3">1. Quais dados coletamos?</h2>
-                <p>Para fornecer nossos serviços, coletamos os seguintes tipos de informações:</p>
-                <ul class="list-disc list-inside mt-2 space-y-2">
-                    <li><strong>Informações de Cadastro:</strong> Quando você cria uma conta, coletamos seu <strong>endereço de e-mail</strong>. Este e-mail é usado como identificador único para sua conta e para fins de autenticação, gerenciado através do serviço Firebase Authentication.</li>
-                    <li><strong>Dados Financeiros:</strong> Todas as informações que você insere na plataforma, incluindo, mas não se limitando a:
-                        <ul class="list-circle list-inside ml-4 mt-1">
-                            <li>Receitas (descrição e valor).</li>
-                            <li>Despesas gerais (descrição, valor e tipo).</li>
-                            <li>Detalhes de cartões de crédito (nome, limite, datas de fechamento e vencimento).</li>
-                            <li>Histórico de compras no cartão (descrição, valor, número de parcelas).</li>
-                            <li>Detalhes de empréstimos e financiamentos (tipo, descrição, valor e quantidade de parcelas).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Dados de Configuração:</strong> Coletamos suas preferências de uso da aplicação, como o tema de exibição (claro ou escuro) e o mês definido como início do seu controle financeiro.</li>
+                <h2 class="text-2xl font-bold mb-3">2. Quais Dados São Armazenados?</h2>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    Para que o sistema funcione, ele precisa salvar as informações que você insere. É importante entender que **nós não coletamos seus dados**; o sistema apenas os armazena em sua conta pessoal e segura. Os dados armazenados incluem:
+                </p>
+                <ul class="list-disc list-inside mt-4 space-y-2 text-gray-700 dark:text-gray-300">
+                    <li><strong>Informações de Cadastro:</strong> Seu endereço de e-mail, utilizado exclusivamente para o login e para garantir a segurança e o acesso à sua conta.</li>
+                    <li><strong>Dados Financeiros Inseridos por Você:</strong> Todas as informações que você adiciona ao sistema, como receitas, despesas, detalhes de cartões de crédito (nome, limite) e informações de empréstimos (descrição, valor, parcelas).</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h2 class="text-2xl font-bold mb-3">3. Como Seus Dados São Utilizados?</h2>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    Os dados que você salva na aplicação são utilizados unicamente para as finalidades do sistema, que são:
+                </p>
+                <ul class="list-disc list-inside mt-4 space-y-2 text-gray-700 dark:text-gray-300">
+                    <li>Permitir seu acesso seguro e exclusivo à sua conta.</li>
+                    <li>Exibir seus resumos financeiros, gráficos e listas de despesas no seu painel.</li>
+                    <li>Calcular saldos, limites de cartão e outras métricas financeiras para sua visualização.</li>
+                    <li>Personalizar sua experiência, como salvar sua preferência de tema (claro ou escuro).</li>
+                </ul>
+                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-4">
+                    Reforçamos que suas informações financeiras são tratadas como confidenciais e não são acessadas, analisadas ou compartilhadas por nós para nenhuma outra finalidade.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-bold mb-3">4. Segurança dos Dados</h2>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    A segurança dos seus dados é garantida através da plataforma Firebase do Google. Utilizamos as regras de segurança do Firestore, que asseguram que **apenas você, com seu login e senha, possa ler e escrever seus próprios dados.** Nenhuma outra pessoa, incluindo administradores do sistema, tem acesso às suas informações financeiras.
+                </p>
+            </section>
+            
+            <section>
+                <h2 class="text-2xl font-bold mb-3">5. Seus Direitos e Controle</h2>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    Você tem controle total sobre seus dados. A qualquer momento, você pode:
+                </p>
+                 <ul class="list-disc list-inside mt-4 space-y-2 text-gray-700 dark:text-gray-300">
+                    <li>Adicionar, editar ou excluir qualquer informação financeira que você tenha inserido.</li>
+                    <li>Excluir sua conta, o que removerá permanentemente todos os seus dados do nosso banco de dados.</li>
                 </ul>
             </section>
 
             <section>
-                <h2 class="text-2xl font-bold mb-3">2. Como usamos seus dados?</h2>
-                <p>Utilizamos os dados coletados exclusivamente para os seguintes propósitos:</p>
-                <ul class="list-disc list-inside mt-2 space-y-2">
-                    <li><strong>Fornecer e Manter o Serviço:</strong> Seus dados financeiros são a base para que a aplicação funcione, permitindo que você organize suas finanças, veja resumos, gráficos e projeções.</li>
-                    <li><strong>Personalizar sua Experiência:</strong> Usamos suas configurações para adaptar a interface da aplicação às suas preferências.</li>
-                    <li><strong>Segurança:</strong> Seu e-mail é utilizado para garantir que apenas você tenha acesso à sua conta e aos seus dados financeiros, através do sistema de autenticação segura do Firebase.</li>
-                </ul>
+                <h2 class="text-2xl font-bold mb-3">6. Contato</h2>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    Se você tiver qualquer dúvida sobre esta Política de Privacidade, sinta-se à vontade para entrar em contato.
+                </p>
             </section>
-
-            <section>
-                <h2 class="text-2xl font-bold mb-3">3. Armazenamento e Segurança dos Dados</h2>
-                <ul class="list-disc list-inside mt-2 space-y-2">
-                    <li>Seus dados são armazenados de forma segura nos servidores do Google Cloud, através do serviço <strong>Firebase Firestore</strong>.</li>
-                    <li>Implementamos regras de segurança (<code>Firebase Security Rules</code>) que garantem que <strong>apenas você, como usuário autenticado, possa ler e escrever seus próprios dados</strong>. Ninguém mais, nem mesmo os administradores do sistema, tem acesso direto às suas informações financeiras detalhadas.</li>
-                    <li>A comunicação entre seu navegador e nossos servidores é criptografada.</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold mb-3">4. Compartilhamento de Dados</h2>
-                <p><strong>Nós não compartilhamos, vendemos, alugamos ou de qualquer outra forma divulgamos suas informações pessoais ou financeiras a terceiros.</strong> Seus dados são confidenciais e usados apenas para o funcionamento da plataforma.</p>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold mb-3">5. Seus Direitos</h2>
-                <p>Você tem total controle sobre seus dados:</p>
-                <ul class="list-disc list-inside mt-2 space-y-2">
-                    <li><strong>Acesso e Edição:</strong> Você pode acessar e editar todas as suas informações financeiras a qualquer momento através da seção "Gerir Finanças" da aplicação.</li>
-                    <li><strong>Exclusão de Dados:</strong> Você pode excluir registros individuais (despesas, cartões, etc.) diretamente na interface da aplicação.</li>
-                    <li><strong>Exclusão da Conta:</strong> Caso deseje excluir sua conta e todos os dados associados permanentemente, entre em contato conosco.</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold mb-3">6. Cookies e Tecnologias de Rastreamento</h2>
-                <p>Utilizamos o <code>localStorage</code> do seu navegador para salvar suas preferências de tema (claro/escuro). Não utilizamos cookies para rastreamento ou publicidade.</p>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold mb-3">7. Alterações a esta Política de Privacidade</h2>
-                <p>Podemos atualizar nossa Política de Privacidade periodicamente. Notificaremos sobre quaisquer alterações, publicando a nova política nesta página. Recomendamos que você revise esta página periodicamente para quaisquer alterações.</p>
-            </section>
-
-            <section>
-                <h2 class="text-2xl font-bold mb-3">8. Contato</h2>
-                <p>Se tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco.</p>
-            </section>
-
-            <div class="text-center pt-4">
-                <a href="javascript:history.back()" class="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">&larr; Voltar</a>
-            </div>
         </div>
+        
+        <footer class="text-center mt-8">
+            <a href="login.html" class="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline">Voltar para o Login</a>
+        </footer>
     </div>
 </body>
 </html>
+
