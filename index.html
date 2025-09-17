@@ -252,23 +252,22 @@
         });
         
         function getChartFontColor() {
-            return document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151'; // gray-200 for dark, gray-700 for light
+            return document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151';
         }
 
         function updateChartColors() {
             const fontColor = getChartFontColor();
+            const borderColor = document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff';
+            
             if (despesasChart) {
                 despesasChart.options.plugins.legend.labels.color = fontColor;
-                despesasChart.options.plugins.tooltip.titleColor = fontColor;
-                despesasChart.options.plugins.tooltip.bodyColor = fontColor;
+                despesasChart.data.datasets[0].borderColor = borderColor;
                 despesasChart.update();
             }
             if (evolucaoChart) {
                 evolucaoChart.options.plugins.legend.labels.color = fontColor;
                 evolucaoChart.options.scales.x.ticks.color = fontColor;
                 evolucaoChart.options.scales.y.ticks.color = fontColor;
-                 evolucaoChart.options.plugins.tooltip.titleColor = fontColor;
-                evolucaoChart.options.plugins.tooltip.bodyColor = fontColor;
                 evolucaoChart.update();
             }
         }
@@ -311,12 +310,12 @@
 
         function initializePieChart() {
             const ctx = document.getElementById('despesasChart').getContext('2d');
-            despesasChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Gerais', 'Faturas', 'Empréstimos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b'], borderColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: getChartFontColor(), font: { size: 14 } } } } } });
+            despesasChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Gerais', 'Faturas', 'Empréstimos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b'], borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } } } } });
         }
 
         function initializeBarChart() {
             const ctx = document.getElementById('evolucaoChart').getContext('2d');
-            evolucaoChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [ { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.7)', borderColor: '#10b981', borderWidth: 1 }, { label: 'Despesas', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 1 } ] }, options: { responsive: true, scales: { y: { ticks: { color: getChartFontColor() } }, x: { ticks: { color: getChartFontColor() } } }, plugins: { legend: { labels: { color: getChartFontColor() } } } } });
+            evolucaoChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [ { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.7)', borderColor: '#10b981', borderWidth: 1 }, { label: 'Despesas', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 1 } ] }, options: { responsive: true, scales: { y: {}, x: {} }, plugins: { legend: {} } } });
         }
 
         async function checkUserActivity() {
@@ -380,6 +379,7 @@
             initializePieChart();
             initializeBarChart();
             setupThemeSwitcher();
+
             checkUserActivity().then(() => {
                 updateMonthDisplay();
                 fetchEvolutionData();
@@ -415,7 +415,9 @@
                     const cartao = cartaoDoc.data();
                     const comprasSnap = await getDocs(query(collection(db, `users/${currentUserId}/cartoes/${cartaoDoc.id}/compras`)));
                     comprasSnap.forEach(compraDoc => {
-                        const compra = compraDoc.data(), dataCompra = compra.dataCompra.toDate(), valorParcela = compra.valorTotal / compra.parcelasTotal;
+                        const compra = compraDoc.data()
+                        if(!compra.dataCompra) return;
+                        const dataCompra = compra.dataCompra.toDate(), valorParcela = compra.valorTotal / compra.parcelasTotal;
                         for (let p = 0; p < compra.parcelasTotal; p++) {
                             let mesVencimento = dataCompra.getMonth(), anoVencimento = dataCompra.getFullYear();
                             if (dataCompra.getDate() > cartao.diaFechamento) { mesVencimento++; }
@@ -501,7 +503,7 @@
                     listaEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Nenhum cartão.</p>';
                     recalcularTotalFaturas(); 
                 } else if(listaEl.querySelector('[id^="fatura-"]') === null && !cartoesSnap.empty) {
-                     listaEl.innerHTML = ''; // Limpa se não tiver faturas pra mostrar mas tiver cartões
+                     listaEl.innerHTML = ''; 
                 }
             });
 
@@ -516,10 +518,10 @@
             
             function updateGamificationPanel(totalReceitas, saldo) {
                 // Lógica da Jornada
-                let journeyLevel = 0; // Nível 1 por padrão
+                let journeyLevel = 0; 
                 if(userActivity.hasDespesas) journeyLevel = 1;
                 if(userActivity.hasCartoes) journeyLevel = 2;
-                if(userActivity.hasEmprestimos) journeyLevel = 4; // Pulei pro 5 pra ter mais impacto
+                if(userActivity.hasEmprestimos) journeyLevel = 4;
                 
                 const journeyInfo = gamificationData.journey[journeyLevel];
                 document.getElementById('journey-level-icon').textContent = journeyInfo.icon;
@@ -553,9 +555,7 @@
                 
                 if (despesasChart) {
                     despesasChart.data.datasets[0].data = [totalDespesasGerais, totalFaturas, totalEmprestimos];
-                    despesasChart.options.plugins.legend.labels.color = getChartFontColor();
-                    despesasChart.data.datasets[0].borderColor = document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff';
-                    despesasChart.update();
+                    updateChartColors();
                 }
                 
                 updateGamificationPanel(totalReceitas, saldo);
