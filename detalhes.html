@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,27 +8,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style> 
         body { font-family: 'Inter', sans-serif; }
-        .tab-active { border-color: #22d3ee; color: #22d3ee; }
     </style>
+    <script>
+        // Aplica o tema imediatamente para evitar "flash" de cores
+        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark')
+        } else {
+            document.documentElement.classList.add('dark')
+        }
+    </script>
 </head>
-<body class="bg-gray-900 text-white">
-    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p>A carregar...</p></div>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
+    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p class="text-white">A carregar...</p></div>
 
     <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-cyan-400">Gerir Finanças</h1>
-                <p class="text-gray-400">Adicione e controle suas despesas, cartões e empréstimos.</p>
+                <h1 class="text-3xl font-bold text-cyan-600 dark:text-cyan-400">Gerir Finanças</h1>
+                <p class="text-gray-600 dark:text-gray-400">Adicione e controle suas despesas, cartões e empréstimos.</p>
             </div>
-            <a href="index.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">&larr; Voltar ao Painel</a>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">&larr; Voltar ao Painel</a>
+                <!-- Seletor de Tema -->
+                <div class="relative">
+                    <button id="theme-menu-button" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                    </button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20">
+                        <p class="p-3 text-sm font-semibold text-gray-500 dark:text-gray-400">Modo de Exibição</p>
+                        <button data-theme="dark" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Escuro</button>
+                        <button data-theme="light" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Claro</button>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <!-- Abas de Navegação -->
-        <div class="border-b border-gray-700 mb-8">
+        <div class="border-b border-gray-200 dark:border-gray-700 mb-8">
             <nav class="flex space-x-8" aria-label="Tabs">
-                <button data-tab="despesas" class="tab-button tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">Despesas do Mês</button>
-                <button data-tab="cartoes" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200">Cartões de Crédito</button>
-                <button data-tab="emprestimos" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200">Empréstimos</button>
+                <button data-tab="despesas" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">Despesas do Mês</button>
+                <button data-tab="cartoes" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">Cartões de Crédito</button>
+                <button data-tab="emprestimos" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg">Empréstimos</button>
             </nav>
         </div>
 
@@ -36,49 +56,49 @@
         <main>
             <!-- Aba Despesas -->
             <div id="tab-content-despesas" class="tab-content">
-                <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                     <h2 class="text-2xl font-bold mb-4">Adicionar Despesa</h2>
                     <form id="form-add-despesa" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                        <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Supermercado" required></div>
-                        <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-despesa" step="0.01" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="350.50" required></div>
-                        <div><label class="block text-sm mb-2">Tipo</label><select id="tipo-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg"><option value="variavel">Variável</option><option value="fixa">Fixa</option></select></div>
-                        <button type="submit" id="btn-submit-despesa" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                        <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-despesa" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" placeholder="Ex: Supermercado" required></div>
+                        <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-despesa" step="0.01" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" placeholder="350.50" required></div>
+                        <div><label class="block text-sm mb-2">Tipo</label><select id="tipo-despesa" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none"><option value="variavel">Variável</option><option value="fixa">Fixa</option></select></div>
+                        <button type="submit" id="btn-submit-despesa" class="bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
                     </form>
-                     <button id="btn-cancel-edit-despesa" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
+                     <button id="btn-cancel-edit-despesa" class="hidden mt-2 bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
                 </section>
                 <section id="lista-despesas" class="space-y-4"></section>
             </div>
 
             <!-- Aba Cartões -->
             <div id="tab-content-cartoes" class="tab-content hidden">
-                <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                     <h2 class="text-2xl font-bold mb-4">Adicionar Cartão de Crédito</h2>
                     <form id="form-add-cartao" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                        <div class="md:col-span-2"><label class="block text-sm mb-2">Nome do Cartão</label><input type="text" id="nome-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Cartão Principal" required></div>
-                        <div><label class="block text-sm mb-2">Limite</label><input type="number" id="limite-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                        <div class="md:col-span-2"><label class="block text-sm mb-2">Nome do Cartão</label><input type="text" id="nome-cartao" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" placeholder="Ex: Cartão Principal" required></div>
+                        <div><label class="block text-sm mb-2">Limite</label><input type="number" id="limite-cartao" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" required></div>
                         <div class="grid grid-cols-2 gap-2">
-                           <div><label class="block text-sm mb-2">Fech.</label><input type="number" id="fechamento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" min="1" max="31" required></div>
-                           <div><label class="block text-sm mb-2">Venc.</label><input type="number" id="vencimento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" min="1" max="31" required></div>
+                           <div><label class="block text-sm mb-2">Fech.</label><input type="number" id="fechamento-cartao" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" min="1" max="31" required></div>
+                           <div><label class="block text-sm mb-2">Venc.</label><input type="number" id="vencimento-cartao" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" min="1" max="31" required></div>
                         </div>
-                        <button type="submit" id="btn-submit-cartao" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11 md:col-start-4">Adicionar</button>
+                        <button type="submit" id="btn-submit-cartao" class="bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white font-bold py-2.5 px-6 rounded-lg h-11 md:col-start-4">Adicionar</button>
                     </form>
-                     <button id="btn-cancel-edit-cartao" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
+                     <button id="btn-cancel-edit-cartao" class="hidden mt-2 bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
                 </section>
                 <section id="lista-cartoes" class="space-y-8"></section>
             </div>
 
             <!-- Aba Empréstimos -->
             <div id="tab-content-emprestimos" class="tab-content hidden">
-                 <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                 <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                     <h2 class="text-2xl font-bold mb-4">Adicionar Empréstimo ou Financiamento</h2>
                     <form id="form-add-emprestimo" class="grid grid-cols-2 md:grid-cols-5 gap-4 items-end">
-                        <div><label class="block text-sm mb-2">Tipo</label><select id="tipo-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg"><option value="emprestimo">Empréstimo Pessoal</option><option value="financiamento">Financiamento</option></select></div>
-                        <div><label class="block text-sm mb-2">Descrição</label><input type="text" id="nome-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Finan. Carro" required></div>
-                        <div><label class="block text-sm mb-2">Valor Parcela</label><input type="number" step="0.01" id="valor-parcela-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
-                        <div><label class="block text-sm mb-2">Qtd. Parcelas</label><input type="number" id="qtd-parcelas-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="12" required></div>
-                        <button type="submit" id="btn-submit-emprestimo" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                        <div><label class="block text-sm mb-2">Tipo</label><select id="tipo-emprestimo" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none"><option value="emprestimo">Empréstimo Pessoal</option><option value="financiamento">Financiamento</option></select></div>
+                        <div><label class="block text-sm mb-2">Descrição</label><input type="text" id="nome-emprestimo" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" placeholder="Ex: Finan. Carro" required></div>
+                        <div><label class="block text-sm mb-2">Valor Parcela</label><input type="number" step="0.01" id="valor-parcela-emprestimo" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" required></div>
+                        <div><label class="block text-sm mb-2">Qtd. Parcelas</label><input type="number" id="qtd-parcelas-emprestimo" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg focus:ring-2 focus:ring-cyan-500 border-none" placeholder="12" required></div>
+                        <button type="submit" id="btn-submit-emprestimo" class="bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
                     </form>
-                     <button id="btn-cancel-edit-emprestimo" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
+                     <button id="btn-cancel-edit-emprestimo" class="hidden mt-2 bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
                 </section>
                 <section id="lista-emprestimos" class="space-y-4"></section>
             </div>
@@ -112,7 +132,6 @@
 
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         
-        // Autenticação e Setup da Página
         onAuthStateChanged(auth, user => {
             if (user) {
                 currentUserId = user.uid;
@@ -126,32 +145,64 @@
         });
         
         function setupEventListeners() {
-            // Navegação por Abas
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => {
-                        btn.classList.remove('tab-active');
-                        btn.classList.add('text-gray-400', 'border-transparent');
-                    });
-                    button.classList.add('tab-active');
-                    button.classList.remove('text-gray-400', 'border-transparent');
-                    
-                    tabContents.forEach(content => content.classList.add('hidden'));
-                    document.getElementById(`tab-content-${button.dataset.tab}`).classList.remove('hidden');
+            
+            function setActiveTab(button) {
+                 tabButtons.forEach(btn => {
+                    btn.classList.remove('border-cyan-600', 'text-cyan-600', 'dark:border-cyan-400', 'dark:text-cyan-400');
+                    btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200');
                 });
+                button.classList.add('border-cyan-600', 'text-cyan-600', 'dark:border-cyan-400', 'dark:text-cyan-400');
+                button.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400', 'hover:text-gray-700', 'dark:hover:text-gray-200');
+                
+                tabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(`tab-content-${button.dataset.tab}`).classList.remove('hidden');
+            }
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => setActiveTab(button));
             });
+            setActiveTab(tabButtons[0]);
 
-            // Forms de Adicionar/Editar
+
             handleDespesaForm();
             handleCartaoForm();
             handleEmprestimoForm();
+            setupThemeSwitcher();
 
-            // Handlers de cliques para Editar e Excluir
             document.getElementById('lista-despesas').addEventListener('click', handleListActions);
             document.getElementById('lista-cartoes').addEventListener('click', handleListActions);
             document.getElementById('lista-emprestimos').addEventListener('click', handleListActions);
+        }
+
+        function setupThemeSwitcher() {
+            const themeMenuButton = document.getElementById('theme-menu-button');
+            const themeMenu = document.getElementById('theme-menu');
+            const themeOptions = document.querySelectorAll('.theme-option');
+
+            themeMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                themeMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', () => {
+                themeMenu.classList.add('hidden');
+            });
+
+            themeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.dataset.theme;
+                    if (theme === 'light') {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                    themeMenu.classList.add('hidden');
+                });
+            });
         }
 
         function loadAllData() {
@@ -160,7 +211,6 @@
             loadEmprestimos();
         }
 
-        // --- LÓGICA DE DESPESAS ---
         function handleDespesaForm() {
             const form = document.getElementById('form-add-despesa');
             form.addEventListener('submit', async (e) => {
@@ -195,17 +245,17 @@
                 const listaEl = document.getElementById('lista-despesas');
                 listaEl.innerHTML = '';
                 if (snapshot.empty) {
-                    listaEl.innerHTML = '<p class="text-center text-gray-500">Nenhuma despesa adicionada.</p>';
+                    listaEl.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Nenhuma despesa adicionada.</p>';
                     return;
                 }
                 snapshot.forEach(doc => {
                     const d = doc.data();
                     const el = document.createElement('div');
-                    el.className = 'bg-gray-700 p-4 rounded-lg flex justify-between items-center';
+                    el.className = 'bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center';
                     el.innerHTML = `
                         <div>
-                            <p class="font-bold">${d.descricao} - <span class="capitalize text-cyan-400 font-normal">${d.tipo}</span></p>
-                            <p class="text-red-400">${formatarMoeda(d.valor)}</p>
+                            <p class="font-bold">${d.descricao} - <span class="capitalize text-cyan-600 dark:text-cyan-400 font-normal">${d.tipo}</span></p>
+                            <p class="text-red-600 dark:text-red-400">${formatarMoeda(d.valor)}</p>
                         </div>
                         <div class="flex gap-2">
                            <button data-id="${doc.id}" data-action="edit" data-type="despesa" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
@@ -234,7 +284,6 @@
             }
         }
 
-        // --- LÓGICA DE CARTÕES ---
         function handleCartaoForm() {
             const form = document.getElementById('form-add-cartao');
             form.addEventListener('submit', async (e) => {
@@ -269,7 +318,7 @@
                 const listaEl = document.getElementById('lista-cartoes');
                 listaEl.innerHTML = '';
                  if (snapshot.empty) {
-                    listaEl.innerHTML = '<p class="text-center text-gray-500">Nenhum cartão adicionado.</p>';
+                    listaEl.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Nenhum cartão adicionado.</p>';
                     return;
                 }
                 snapshot.forEach(doc => {
@@ -296,7 +345,6 @@
             }
         }
 
-        // --- LÓGICA DE EMPRÉSTIMOS ---
         function handleEmprestimoForm() {
             const form = document.getElementById('form-add-emprestimo');
             form.addEventListener('submit', async (e) => {
@@ -330,18 +378,18 @@
                 const listaEl = document.getElementById('lista-emprestimos');
                 listaEl.innerHTML = '';
                 if (snapshot.empty) {
-                    listaEl.innerHTML = '<p class="text-center text-gray-500">Nenhum empréstimo adicionado.</p>';
+                    listaEl.innerHTML = '<p class="text-center text-gray-500 dark:text-gray-400">Nenhum empréstimo adicionado.</p>';
                     return;
                 }
                 snapshot.forEach(doc => {
                     const e = doc.data();
                     const tipoTexto = e.tipo === 'emprestimo' ? 'Empréstimo' : 'Financiamento';
                     const el = document.createElement('div');
-                    el.className = 'bg-gray-700 p-4 rounded-lg flex justify-between items-center';
+                    el.className = 'bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex justify-between items-center';
                     el.innerHTML = `
                         <div>
-                            <p class="font-bold">${e.nome} <span class="text-sm font-normal text-cyan-400">(${tipoTexto})</span></p>
-                            <p class="text-red-400">${e.qtdParcelas}x de ${formatarMoeda(e.valorParcela)}</p>
+                            <p class="font-bold">${e.nome} <span class="text-sm font-normal text-cyan-600 dark:text-cyan-400">(${tipoTexto})</span></p>
+                            <p class="text-red-600 dark:text-red-400">${e.qtdParcelas}x de ${formatarMoeda(e.valorParcela)}</p>
                         </div>
                          <div class="flex gap-2">
                            <button data-id="${doc.id}" data-action="edit" data-type="emprestimo" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
@@ -371,7 +419,6 @@
             }
         }
         
-        // --- AÇÕES GERAIS DA LISTA (EDITAR/EXCLUIR) ---
         async function handleListActions(e) {
             const target = e.target.closest('button');
             if (!target) return;
@@ -405,7 +452,6 @@
             }
         }
 
-        // --- RENDERIZAÇÃO COMPLEXA (CARTÃO + COMPRAS) ---
         function renderCartao(cartaoDoc) {
             const listaEl = document.getElementById('lista-cartoes');
             const cartao = cartaoDoc.data();
@@ -418,12 +464,12 @@
                 listaEl.appendChild(cartaoContainer);
             }
             
-            cartaoContainer.className = "bg-gray-700 p-6 rounded-xl shadow-lg";
+            cartaoContainer.className = "bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg";
             cartaoContainer.innerHTML = `
                 <div class="flex flex-wrap justify-between items-start mb-4">
                     <div>
                         <h3 class="text-xl font-bold">${cartao.nome}</h3>
-                        <p class="text-sm text-gray-400">Fecha dia ${cartao.diaFechamento} | Vence dia ${cartao.diaVencimento}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Fecha dia ${cartao.diaFechamento} | Vence dia ${cartao.diaVencimento}</p>
                     </div>
                     <div class="flex gap-2 mt-2 md:mt-0">
                          <button data-id="${cartaoId}" data-action="edit" data-type="cartao" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
@@ -435,28 +481,28 @@
                         <span id="fatura-atual-${cartaoId}">Fatura Atual: R$ 0,00</span>
                         <span>Limite: ${formatarMoeda(cartao.limite)}</span>
                      </div>
-                     <div class="w-full bg-gray-600 rounded-full h-2.5"><div id="limite-usado-bar-${cartaoId}" class="bg-cyan-500 h-2.5 rounded-full" style="width: 0%"></div></div>
+                     <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5"><div id="limite-usado-bar-${cartaoId}" class="bg-cyan-600 dark:bg-cyan-500 h-2.5 rounded-full" style="width: 0%"></div></div>
                      <p id="limite-disponivel-${cartaoId}" class="text-right text-sm mt-1">Disponível: ${formatarMoeda(cartao.limite)}</p>
                 </div>
-                <div class="border-t border-gray-600 pt-4">
+                <div class="border-t border-gray-200 dark:border-gray-600 pt-4">
                      <h4 class="font-bold mb-3">Adicionar Compra</h4>
                      <form id="form-compra-${cartaoId}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                         <div class="md:col-span-2">
                             <label class="block text-sm mb-1">Descrição</label>
-                            <input type="text" name="descricao-compra" class="bg-gray-600 w-full p-2 rounded-lg" required>
+                            <input type="text" name="descricao-compra" class="bg-gray-200 dark:bg-gray-600 w-full p-2 rounded-lg" required>
                         </div>
                         <div>
                             <label class="block text-sm mb-1">Valor Total</label>
-                            <input type="number" step="0.01" name="valor-compra" class="bg-gray-600 w-full p-2 rounded-lg" required>
+                            <input type="number" step="0.01" name="valor-compra" class="bg-gray-200 dark:bg-gray-600 w-full p-2 rounded-lg" required>
                         </div>
                         <div>
                             <label class="block text-sm mb-1">Parcelas</label>
-                            <input type="number" name="parcelas-compra" class="bg-gray-600 w-full p-2 rounded-lg" min="1" placeholder="1">
+                            <input type="number" name="parcelas-compra" class="bg-gray-200 dark:bg-gray-600 w-full p-2 rounded-lg" min="1" placeholder="1">
                         </div>
-                        <button type="button" data-id="${cartaoId}" data-action="add-compra" class="bg-blue-500 hover:bg-blue-600 font-bold p-2.5 rounded-lg h-10">Adicionar</button>
+                        <button type="button" data-id="${cartaoId}" data-action="add-compra" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-2.5 rounded-lg h-10">Adicionar</button>
                      </form>
                 </div>
-                 <div class="border-t border-gray-600 mt-4 pt-4">
+                 <div class="border-t border-gray-200 dark:border-gray-600 mt-4 pt-4">
                      <h4 class="font-bold mb-2">Histórico de Compras</h4>
                      <div id="lista-compras-${cartaoId}" class="space-y-2"></div>
                  </div>
@@ -475,7 +521,6 @@
 
                 comprasSnapshot.forEach(compraDoc => {
                     const compra = compraDoc.data();
-                    // FIX: Use current date as a fallback if server timestamp is pending
                     const dataCompra = compra.dataCompra ? compra.dataCompra.toDate() : new Date(); 
                     
                     limiteUsado += compra.valorTotal;
@@ -501,15 +546,15 @@
                     }
 
                     const compraEl = document.createElement('div');
-                    compraEl.className = 'flex justify-between items-center bg-gray-600 p-2 rounded text-sm';
+                    compraEl.className = 'flex justify-between items-center bg-gray-200 dark:bg-gray-600 p-2 rounded text-sm';
                     compraEl.innerHTML = `
                         <div>
                             <span>${compra.descricao}</span>
-                            <span class="text-gray-400 ml-2">(${compra.parcelasTotal}x de ${formatarMoeda(valorParcela)})</span>
+                            <span class="text-gray-500 dark:text-gray-400 ml-2">(${compra.parcelasTotal}x de ${formatarMoeda(valorParcela)})</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="font-semibold">${formatarMoeda(compra.valorTotal)}</span>
-                            <button data-id="${compraDoc.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="text-red-400 hover:text-red-300">✖</button>
+                            <button data-id="${compraDoc.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="text-red-500 hover:text-red-400 dark:text-red-400 dark:hover:text-red-300">✖</button>
                         </div>
                     `;
                     fragment.appendChild(compraEl);
@@ -518,7 +563,7 @@
                 listaComprasEl.appendChild(fragment);
 
                 if (!listaComprasEl.hasChildNodes()) {
-                    listaComprasEl.innerHTML = '<p class="text-sm text-gray-500">Nenhuma compra registrada.</p>';
+                    listaComprasEl.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400">Nenhuma compra registrada.</p>';
                 }
 
                 document.getElementById(`fatura-atual-${cartaoId}`).textContent = `Fatura Atual: ${formatarMoeda(faturaAtual)}`;
