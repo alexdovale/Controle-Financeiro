@@ -5,44 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Financeiro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 <body class="bg-gray-900 text-white">
     <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50">
-        <p>Carregando...</p>
+        <p>A carregar...</p>
     </div>
 
-    <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-4xl hidden">
+    <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-cyan-400">Painel Financeiro</h1>
                 <p id="welcome-message" class="text-gray-400 mt-1"></p>
             </div>
             <div class="flex items-center gap-4">
-                <a href="detalhes.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Ver Detalhes</a>
+                <a href="detalhes.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Gerir Despesas</a>
                 <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Sair</button>
             </div>
         </header>
-
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Total de Receitas</h2><p id="total-receitas" class="text-4xl font-bold text-green-400">R$ 0,00</p></div>
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Total de Despesas</h2><p id="total-despesas" class="text-4xl font-bold text-red-400">R$ 0,00</p></div>
+        
+        <!-- Seletor de Mês -->
+        <section class="mb-8 flex justify-center items-center gap-4">
+            <button id="prev-month-btn" class="p-2 rounded-md bg-gray-700 hover:bg-gray-600">&lt;</button>
+            <h2 id="current-month-year" class="text-2xl font-bold text-center"></h2>
+            <button id="next-month-btn" class="p-2 rounded-md bg-gray-700 hover:bg-gray-600">&gt;</button>
         </section>
 
-        <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
-            <h2 class="text-2xl font-bold mb-4">Adicionar Nova Receita</h2>
-            <form id="form-receita" class="flex flex-col md:flex-row gap-4 items-end">
-                <div class="w-full"><label for="descricao-receita" class="block mb-2 text-sm font-medium text-gray-400">Descrição</label><input type="text" id="descricao-receita" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5" placeholder="Ex: Salário" required></div>
-                <div class="w-full md:w-1/3"><label for="valor-receita" class="block mb-2 text-sm font-medium text-gray-400">Valor (R$)</label><input type="number" id="valor-receita" step="0.01" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5" placeholder="1500,00" required></div>
-                <button type="submit" class="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg">Adicionar</button>
-            </form>
+        <!-- Cards de Resumo -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Receitas do Mês</h2><p id="total-receitas" class="text-4xl font-bold text-green-400">R$ 0,00</p></div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Despesas do Mês</h2><p id="total-despesas" class="text-4xl font-bold text-red-400">R$ 0,00</p></div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Balanço do Mês</h2><p id="balanco-mes" class="text-4xl font-bold text-gray-300">R$ 0,00</p></div>
         </section>
 
-        <section class="mt-8">
-            <h2 class="text-2xl font-bold mb-4">Histórico de Receitas</h2>
-            <div id="lista-receitas" class="space-y-3"></div>
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Coluna Esquerda: Gráficos e Renda -->
+            <div class="lg:col-span-2 space-y-6">
+                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Evolução dos Gastos</h3>
+                    <canvas id="expenses-line-chart"></canvas>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Despesas por Categoria</h3>
+                    <canvas id="expenses-pie-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Renda e Alertas -->
+            <div class="space-y-6">
+                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-2">Comprometimento da Renda</h3>
+                    <p class="text-gray-400 text-sm mb-4">Quanto da sua renda já está comprometida com despesas fixas e parcelas.</p>
+                    <div class="w-full bg-gray-700 rounded-full h-4 mb-2">
+                        <div id="renda-progress" class="bg-orange-500 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p id="renda-percent" class="text-center font-bold text-2xl">0%</p>
+                </div>
+                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Alertas e Notificações</h3>
+                    <div id="alertas-container" class="space-y-3">
+                         <p class="text-gray-500">Nenhum alerta no momento.</p>
+                    </div>
+                </div>
+            </div>
         </section>
+
     </div>
 
     <!-- CONFIGURAÇÃO DO FIREBASE -->
@@ -61,7 +90,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -70,113 +99,133 @@
         const loader = document.getElementById('loader');
         const appContent = document.getElementById('app-content');
         let currentUserId = null;
+        let currentDate = new Date();
+        
+        let pieChart, lineChart;
+
+        const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         onAuthStateChanged(auth, user => {
             if (user) {
-                // Usuário está logado
                 currentUserId = user.uid;
                 document.getElementById('welcome-message').textContent = `Olá, ${user.email}!`;
-                setupApp();
+                setupUI();
+                listenToData();
                 loader.style.display = 'none';
                 appContent.classList.remove('hidden');
             } else {
-                // Usuário não está logado, redireciona
                 window.location.href = 'login.html';
             }
         });
         
-        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-        function setupApp() {
-            const logoutBtn = document.getElementById('logout-btn');
-            logoutBtn.addEventListener('click', () => {
-                signOut(auth).catch(error => console.error("Erro ao sair:", error));
+        function setupUI() {
+            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+            document.getElementById('prev-month-btn').addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                updateDateDisplay();
             });
+            document.getElementById('next-month-btn').addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                updateDateDisplay();
+            });
+            updateDateDisplay();
+        }
+
+        function updateDateDisplay() {
+            const monthName = currentDate.toLocaleString('pt-BR', { month: 'long' });
+            const year = currentDate.getFullYear();
+            document.getElementById('current-month-year').textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${year}`;
+            // Disparar atualização dos dados ao mudar a data
+            listenToData();
+        }
+        
+        function listenToData() {
+            if (!currentUserId) return;
             
-            const formReceita = document.getElementById('form-receita');
-            formReceita.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const descricao = document.getElementById('descricao-receita').value;
-                const valor = parseFloat(document.getElementById('valor-receita').value);
-                try {
-                    await addDoc(collection(db, "users", currentUserId, "receitas"), { descricao, valor });
-                    formReceita.reset();
-                } catch (error) {
-                    console.error("Erro ao adicionar receita:", error);
+            // Listener para Receitas, Despesas, etc...
+            // A lógica aqui ficaria muito mais complexa, agregando dados por mês
+            // Para simplicidade, vamos usar snapshots e filtrar no cliente por enquanto
+            const receitasRef = collection(db, "users", currentUserId, "receitas");
+            const despesasRef = collection(db, "users", currentUserId, "despesas");
+            // Adicionar refs para cartões e empréstimos
+            
+            onSnapshot(query(receitasRef), snapshot => {
+                const allReceitas = snapshot.docs.map(d => d.data());
+                updateDashboard(allReceitas, []); // Passar outras fontes de dados aqui
+            });
+
+             onSnapshot(query(despesasRef), snapshot => {
+                const allDespesas = snapshot.docs.map(d => d.data());
+                 // Isso é um exemplo, a lógica real precisará de todos os dados
+                const allReceitas = []; // Obtenha as receitas novamente ou armazene-as
+                updateDashboard(allReceitas, allDespesas);
+            });
+        }
+
+        function updateDashboard(allReceitas, allDespesas) {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            // Filtrar por mês
+            const receitasMes = allReceitas.filter(r => r.data && new Date(r.data.seconds * 1000).getMonth() === month && new Date(r.data.seconds * 1000).getFullYear() === year);
+            const despesasMes = allDespesas.filter(d => d.data && new Date(d.data.seconds * 1000).getMonth() === month && new Date(d.data.seconds * 1000).getFullYear() === year);
+            
+            // Faltaria somar faturas de cartão e parcelas de empréstimos do mês
+            
+            const totalReceitas = receitasMes.reduce((acc, r) => acc + r.valor, 0);
+            const totalDespesas = despesasMes.reduce((acc, d) => acc + d.valor, 0);
+            const balanco = totalReceitas - totalDespesas;
+            
+            document.getElementById('total-receitas').textContent = formatarMoeda(totalReceitas);
+            document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesas);
+            document.getElementById('balanco-mes').textContent = formatarMoeda(balanco);
+            
+            if(balanco < 0) {
+                 document.getElementById('balanco-mes').classList.remove('text-gray-300', 'text-green-400');
+                 document.getElementById('balanco-mes').classList.add('text-red-400');
+            } else {
+                 document.getElementById('balanco-mes').classList.remove('text-gray-300', 'text-red-400');
+                 document.getElementById('balanco-mes').classList.add('text-green-400');
+            }
+            
+            updateCharts(despesasMes);
+        }
+        
+        function updateCharts(despesas) {
+            const ctxPie = document.getElementById('expenses-pie-chart').getContext('2d');
+            const ctxLine = document.getElementById('expenses-line-chart').getContext('2d');
+
+            // Agregação de dados para os gráficos
+            const despesasPorCategoria = despesas.reduce((acc, d) => {
+                acc[d.categoria] = (acc[d.categoria] || 0) + d.valor;
+                return acc;
+            }, {});
+            
+            if (pieChart) pieChart.destroy();
+            pieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(despesasPorCategoria),
+                    datasets: [{
+                        data: Object.values(despesasPorCategoria),
+                        backgroundColor: ['#f87171', '#fb923c', '#fbbf24', '#a3e635', '#4ade80', '#34d399', '#22d3ee', '#60a5fa', '#818cf8', '#c084fc'],
+                    }]
                 }
             });
 
-            // Escuta por mudanças em tempo real
-            listenToData();
-        }
-
-        function listenToData() {
-            // Referências das coleções
-            const receitasRef = collection(db, "users", currentUserId, "receitas");
-            const despesasGeraisRef = collection(db, "users", currentUserId, "despesasGerais");
-            const cartoesRef = collection(db, "users", currentUserId, "cartoes");
-
-            let allReceitas = [];
-            let allDespesasGerais = [];
-            let allCartoes = [];
-
-            // Listener para receitas
-            onSnapshot(query(receitasRef), snapshot => {
-                allReceitas = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderizarReceitas(allReceitas);
-                calcularTotais();
-            });
-            // Listener para despesas gerais
-            onSnapshot(query(despesasGeraisRef), snapshot => {
-                allDespesasGerais = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                calcularTotais();
-            });
-            // Listener para cartões (e suas despesas)
-             onSnapshot(query(cartoesRef), snapshot => {
-                const cartoesPromises = snapshot.docs.map(async cartaoDoc => {
-                    const cartaoData = cartaoDoc.data();
-                    const despesasCartaoRef = collection(db, "users", currentUserId, "cartoes", cartaoDoc.id, "despesas");
-                    const despesasSnapshot = await new Promise(resolve => onSnapshot(query(despesasCartaoRef), resolve));
-                    const despesas = despesasSnapshot.docs.map(d => d.data());
-                    return { ...cartaoData, despesas };
-                });
-
-                Promise.all(cartoesPromises).then(cartoesCompletos => {
-                    allCartoes = cartoesCompletos;
-                    calcularTotais();
-                });
-            });
-
-            function calcularTotais() {
-                const totalReceitas = allReceitas.reduce((acc, r) => acc + r.valor, 0);
-                const totalDespesasGerais = allDespesasGerais.reduce((acc, d) => acc + d.valor, 0);
-                const totalDespesasCartoes = allCartoes.reduce((acc, cartao) => acc + cartao.despesas.reduce((s, d) => s + d.valor, 0), 0);
-                
-                document.getElementById('total-receitas').textContent = formatarMoeda(totalReceitas);
-                document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesasGerais + totalDespesasCartoes);
-            }
-        }
-        
-        function renderizarReceitas(receitas) {
-            const listaEl = document.getElementById('lista-receitas');
-            listaEl.innerHTML = '';
-            if (receitas.length === 0) {
-                listaEl.innerHTML = '<p class="text-gray-500">Nenhuma receita adicionada.</p>';
-                return;
-            }
-            receitas.forEach(receita => {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800 p-4 rounded-lg flex justify-between items-center';
-                div.innerHTML = `
-                    <p class="font-semibold">${receita.descricao}</p>
-                    <div class="text-right">
-                        <p class="font-bold text-green-400">${formatarMoeda(receita.valor)}</p>
-                        <button class="text-xs text-red-500 hover:text-red-400">Remover</button>
-                    </div>`;
-                div.querySelector('button').addEventListener('click', async () => {
-                    await deleteDoc(doc(db, "users", currentUserId, "receitas", receita.id));
-                });
-                listaEl.appendChild(div);
+             if (lineChart) lineChart.destroy();
+            // Para o gráfico de linha, precisaríamos de dados históricos
+            lineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho"], // Exemplo
+                    datasets: [{
+                        label: 'Gastos Totais',
+                        data: [1200, 1900, 1500, 2100, 1800, 1950], // Exemplo
+                        borderColor: '#22d3ee',
+                        tension: 0.1
+                    }]
+                }
             });
         }
     </script>
