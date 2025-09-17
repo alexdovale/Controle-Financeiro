@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Controle Financeiro</title>
+    <title>Cadastro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
+    <style> 
         body { font-family: 'Inter', sans-serif; }
     </style>
     <script>
-        // Aplica o tema imediatamente para evitar "flash" de cores
         if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
             document.documentElement.classList.remove('dark')
         } else {
@@ -18,47 +17,53 @@
         }
     </script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white flex items-center justify-center min-h-screen p-4 transition-colors duration-300">
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <header class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-cyan-600 dark:text-cyan-400">Crie sua Conta</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-2">Comece a organizar suas finanças hoje mesmo.</p>
+            </header>
 
-    <!-- Seletor de Tema no Canto -->
-    <div class="absolute top-4 right-4">
-        <div class="relative">
-            <button id="theme-menu-button" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
-            </button>
-            <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20">
-                <p class="p-3 text-sm font-semibold text-gray-500 dark:text-gray-400">Modo de Exibição</p>
-                <button data-theme="dark" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Escuro</button>
-                <button data-theme="light" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Claro</button>
+            <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <form id="cadastro-form">
+                    <div class="mb-4">
+                        <label for="email" class="block mb-2 text-sm font-medium">Email</label>
+                        <input type="email" id="email" class="w-full p-3 bg-gray-200 dark:bg-gray-700 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="seu.email@exemplo.com" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="password" class="block mb-2 text-sm font-medium">Senha</label>
+                        <input type="password" id="password" class="w-full p-3 bg-gray-200 dark:bg-gray-700 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="Mínimo de 6 caracteres" required>
+                    </div>
+                    
+                    <div class="text-center text-xs text-gray-500 dark:text-gray-400 mb-6">
+                        <p>Ao se cadastrar, você concorda com nossa <a href="politica_privacidade.html" target="_blank" class="text-cyan-600 dark:text-cyan-400 hover:underline">Política de Privacidade</a>.</p>
+                    </div>
+
+                    <button type="submit" class="w-full bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Cadastrar</button>
+                    <p id="error-message" class="text-red-500 text-center mt-4 text-sm"></p>
+                </form>
+            </div>
+
+            <footer class="text-center mt-6">
+                <p class="text-sm text-gray-600 dark:text-gray-400">Já tem uma conta? <a href="login.html" class="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline">Faça login</a></p>
+            </footer>
+        </div>
+         <!-- Seletor de Tema -->
+        <div class="absolute top-4 right-4">
+            <div class="relative">
+                <button id="theme-menu-button" class="p-2 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                </button>
+                <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20">
+                    <p class="p-3 text-sm font-semibold text-gray-500 dark:text-gray-400">Modo de Exibição</p>
+                    <button data-theme="dark" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Escuro</button>
+                    <button data-theme="light" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Claro</button>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-        <h1 class="text-3xl font-bold text-center text-cyan-600 dark:text-cyan-400 mb-2">Crie sua conta</h1>
-        <p class="text-center text-gray-600 dark:text-gray-400 mb-6">Comece a organizar suas finanças hoje mesmo.</p>
-
-        <form id="signup-form">
-            <div class="mb-4">
-                <label for="email" class="block mb-2 text-sm font-medium">Email</label>
-                <input type="email" id="email" class="bg-gray-200 dark:bg-gray-700 border-none text-gray-800 dark:text-white text-sm rounded-lg focus:ring-2 focus:ring-cyan-500 block w-full p-2.5" placeholder="seuemail@exemplo.com" required>
-            </div>
-            <div class="mb-6">
-                <label for="password" class="block mb-2 text-sm font-medium">Senha</label>
-                <input type="password" id="password" class="bg-gray-200 dark:bg-gray-700 border-none text-gray-800 dark:text-white text-sm rounded-lg focus:ring-2 focus:ring-cyan-500 block w-full p-2.5" required minlength="6">
-                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">A senha deve ter no mínimo 6 caracteres.</p>
-            </div>
-            
-            <p id="error-message" class="text-red-500 text-sm mb-4 text-center"></p>
-
-            <button type="submit" class="w-full text-white bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cadastrar</button>
-        </form>
-
-        <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
-            Já possui uma conta? <a href="login.html" class="font-medium text-cyan-600 dark:text-cyan-400 hover:underline">Faça login</a>
-        </p>
-    </div>
-
+    
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyAvUqbV2e0ewur3G7VQExREDuWbopb6pNU",
@@ -77,36 +82,31 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        const signupForm = document.getElementById('signup-form');
+        const cadastroForm = document.getElementById('cadastro-form');
         const errorMessage = document.getElementById('error-message');
 
-        signupForm.addEventListener('submit', (e) => {
+        cadastroForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            errorMessage.textContent = ''; 
-
-            const email = signupForm['email'].value;
-            const password = signupForm['password'].value;
-            
-            if(password.length < 6) {
-                errorMessage.textContent = 'A senha precisa ter pelo menos 6 caracteres.';
-                return;
-            }
+            const email = cadastroForm.email.value;
+            const password = cadastroForm.password.value;
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     window.location.href = 'index.html';
                 })
                 .catch((error) => {
-                    console.error("Erro de cadastro:", error.code, error.message);
+                    console.error("Erro de cadastro:", error);
                     if (error.code === 'auth/email-already-in-use') {
                         errorMessage.textContent = 'Este email já está em uso.';
+                    } else if (error.code === 'auth/weak-password') {
+                        errorMessage.textContent = 'A senha deve ter no mínimo 6 caracteres.';
                     } else {
                         errorMessage.textContent = 'Ocorreu um erro ao criar a conta.';
                     }
                 });
         });
 
-         // --- Lógica do Seletor de Tema ---
+        // Lógica do seletor de tema
         const themeMenuButton = document.getElementById('theme-menu-button');
         const themeMenu = document.getElementById('theme-menu');
         const themeOptions = document.querySelectorAll('.theme-option');
