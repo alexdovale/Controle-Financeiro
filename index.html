@@ -182,7 +182,14 @@
              <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold">Evolução Mensal</h2>
-                    <button id="toggle-bar-chart" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                    <div class="flex items-center gap-4">
+                        <select id="evolution-range" class="bg-gray-200 dark:bg-gray-700 text-sm rounded-lg p-1 border-none focus:ring-2 focus:ring-cyan-500">
+                            <option value="3">Últimos 3 meses</option>
+                            <option value="6" selected>Últimos 6 meses</option>
+                            <option value="12">Últimos 12 meses</option>
+                        </select>
+                        <button id="toggle-bar-chart" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                    </div>
                 </div>
                 <div id="bar-chart-container">
                     <canvas id="evolucaoChart"></canvas>
@@ -365,6 +372,8 @@
                 }
             });
 
+            document.getElementById('evolution-range').addEventListener('change', fetchEvolutionData);
+
             const formReceita = document.getElementById('form-add-receita');
             formReceita.addEventListener('submit', e => {
                 e.preventDefault();
@@ -388,9 +397,11 @@
 
         async function fetchEvolutionData() {
             if (!currentUserId) return;
+            const rangeSelect = document.getElementById('evolution-range');
+            const monthsToShow = parseInt(rangeSelect.value);
             const labels = [], receitasData = [], despesasData = [];
             
-            for (let i = 5; i >= 0; i--) {
+            for (let i = monthsToShow - 1; i >= 0; i--) {
                 const date = new Date();
                 date.setMonth(date.getMonth() - i, 1);
                 const mes = date.getMonth(), ano = date.getFullYear();
