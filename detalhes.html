@@ -420,10 +420,37 @@
         
         async function handleListActions(e) {
             const target = e.target.closest('button');
-            if (!target) return;
-            
-            const { id, action, type } = target.dataset;
-            if (!id || !action || !type) return;
+            if (!target || !target.dataset.action) return;
+
+            const { id, action, type, cartaoId } = target.dataset;
+
+            if (action === 'add-compra') {
+                if (!id) return;
+                const form = document.getElementById(`form-compra-${id}`);
+                const data = {
+                    descricao: form.querySelector('input[name="descricao-compra"]').value,
+                    valorTotal: parseFloat(form.querySelector('input[name="valor-compra"]').value),
+                    parcelasTotal: parseInt(form.querySelector('input[name="parcelas-compra"]').value) || 1,
+                    dataCompra: serverTimestamp()
+                };
+                if (!data.descricao || isNaN(data.valorTotal)) {
+                    alert("Por favor, preencha a descrição e o valor da compra.");
+                    return;
+                }
+                await addDoc(collection(db, `users/${currentUserId}/cartoes/${id}/compras`), data);
+                form.reset();
+                return;
+            }
+
+            if (action === 'delete-compra') {
+                if (!id || !cartaoId) return;
+                 if (confirm(`Tem certeza que deseja excluir esta compra?`)) {
+                    await deleteDoc(doc(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`, id));
+                 }
+                 return;
+            }
+
+            if (!id || !type) return;
 
             if (action === 'delete') {
                 if (confirm(`Tem certeza que deseja excluir este item?`)) {
@@ -433,21 +460,6 @@
                 if (type === 'despesa') editDespesa(id);
                 if (type === 'cartao') editCartao(id);
                 if (type === 'emprestimo') editEmprestimo(id);
-            } else if (action === 'add-compra') {
-                const form = document.getElementById(`form-compra-${id}`);
-                const data = {
-                    descricao: form['descricao-compra'].value,
-                    valorTotal: parseFloat(form['valor-compra'].value),
-                    parcelasTotal: parseInt(form['parcelas-compra'].value) || 1,
-                    dataCompra: serverTimestamp()
-                };
-                await addDoc(collection(db, `users/${currentUserId}/cartoes/${id}/compras`), data);
-                form.reset();
-            } else if (action === 'delete-compra') {
-                 if (confirm(`Tem certeza que deseja excluir esta compra?`)) {
-                    const { cartaoId } = target.dataset;
-                    await deleteDoc(doc(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`, id));
-                 }
             }
         }
 
@@ -521,13 +533,11 @@
                 let comprasArray = [];
                 comprasSnapshot.forEach(doc => comprasArray.push({id: doc.id, ...doc.data()}));
                 
-                // Ordenação manual no lado do cliente
                 comprasArray.sort((a, b) => {
                     const dateA = a.dataCompra ? a.dataCompra.toDate() : 0;
                     const dateB = b.dataCompra ? b.dataCompra.toDate() : 0;
                     return dateB - dateA;
                 });
-
 
                 comprasArray.forEach(compra => {
                     const dataCompra = compra.dataCompra ? compra.dataCompra.toDate() : new Date(); 
