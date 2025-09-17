@@ -10,6 +10,7 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
     <script>
+        // Aplica o tema imediatamente para evitar "flash" de cores
         if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
             document.documentElement.classList.remove('dark')
         } else {
@@ -21,11 +22,11 @@
     <div class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-md">
             <header class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-cyan-600 dark:text-cyan-400">Bem-vindo(a) de Volta!</h1>
+                <h1 class="text-3xl sm:text-4xl font-bold text-cyan-600 dark:text-cyan-400">Bem-vindo(a) de Volta!</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Acesse sua conta para continuar.</p>
             </header>
 
-            <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+            <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg">
                 <form id="login-form">
                     <div class="mb-4">
                         <label for="email" class="block mb-2 text-sm font-medium">Email</label>
@@ -33,11 +34,11 @@
                     </div>
                     <div class="mb-6">
                         <label for="password" class="block mb-2 text-sm font-medium">Senha</label>
-                        <input type="password" id="password" class="w-full p-3 bg-gray-200 dark:bg-gray-700 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="••••••••" required>
+                        <input type="password" id="password" class="w-full p-3 bg-gray-200 dark:bg-gray-700 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="Sua senha" required>
                     </div>
                     
                     <div class="text-center text-xs text-gray-500 dark:text-gray-400 mb-6">
-                        <p>Ao continuar, você concorda com nossa <a href="politica_privacidade.html" target="_blank" class="text-cyan-600 dark:text-cyan-400 hover:underline">Política de Privacidade</a>.</p>
+                        <p>Seus dados são salvos de forma privada e segura. Ao continuar, você concorda com nossa <a href="politica_privacidade.html" target="_blank" class="text-cyan-600 dark:text-cyan-400 hover:underline">Política de Privacidade</a>.</p>
                     </div>
 
                     <button type="submit" class="w-full bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-700 dark:hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Entrar</button>
@@ -49,7 +50,8 @@
                 <p class="text-sm text-gray-600 dark:text-gray-400">Não tem uma conta? <a href="cadastro.html" class="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline">Cadastre-se</a></p>
             </footer>
         </div>
-         <!-- Seletor de Tema -->
+        
+        <!-- Seletor de Tema -->
         <div class="absolute top-4 right-4">
             <div class="relative">
                 <button id="theme-menu-button" class="p-2 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 shadow-md">
@@ -95,7 +97,7 @@
                     window.location.href = 'index.html';
                 })
                 .catch((error) => {
-                    console.error("Erro de login:", error);
+                    console.error("Erro de login:", error.code);
                     errorMessage.textContent = 'Email ou senha inválidos. Tente novamente.';
                 });
         });
