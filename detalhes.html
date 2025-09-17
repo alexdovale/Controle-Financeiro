@@ -100,6 +100,7 @@
         const db = getFirestore(app);
 
         let currentUserId = null;
+        const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         
         onAuthStateChanged(auth, user => {
             if (user) {
@@ -172,20 +173,147 @@
             const cartoesRef = collection(db, "users", currentUserId, "cartoes");
             onSnapshot(query(cartoesRef), snapshot => {
                 const containerEl = document.getElementById('container-cartoes');
-                containerEl.innerHTML = ''; // Limpar antes de renderizar
+                containerEl.innerHTML = '';
                 snapshot.docs.forEach(cartaoDoc => {
                     const cartao = { id: cartaoDoc.id, ...cartaoDoc.data() };
                     const cartaoEl = document.createElement('div');
-                    cartaoEl.className = 'bg-gray-700 p-6 rounded-xl';
-                    // Template do cartão (simplificado)
+                    cartaoEl.className = 'bg-gray-800 p-6 rounded-xl shadow-lg';
                     cartaoEl.innerHTML = `
-                        <h3 class="text-xl font-bold">${cartao.nome}</h3>
-                        <p>Limite: R$ ${cartao.limite.toFixed(2)}</p>
-                        <!-- Mais detalhes e forms iriam aqui -->
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-2xl font-bold text-cyan-400">${cartao.nome}</h3>
+                                <p class="text-sm text-gray-400">Fecha dia ${cartao.diaFechamento} | Vence dia ${cartao.diaVencimento}</p>
+                            </div>
+                            <button class="text-red-500 hover:text-red-400 text-sm">Excluir</button>
+                        </div>
+
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between font-bold">
+                                <span>Fatura Atual: <span id="fatura-total-${cartao.id}" class="text-red-400">${formatarMoeda(0)}</span></span>
+                                <span>Disponível: <span id="limite-disponivel-${cartao.id}" class="text-green-400">${formatarMoeda(cartao.limite)}</span></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-4">
+                                <div id="limite-progress-${cartao.id}" class="bg-red-500 h-4 rounded-full" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-700 pt-4">
+                             <h4 class="text-lg font-semibold mb-3">Lançar Compra</h4>
+                             <form id="form-compra-${cartao.id}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                <div class="md:col-span-2"><label class="block text-sm mb-1 text-gray-400">Descrição</label><input type="text" name="descricao" class="bg-gray-700 w-full p-2 rounded-lg" required></div>
+                                <div><label class="block text-sm mb-1 text-gray-400">Valor Total</label><input type="number" step="0.01" name="valor" class="bg-gray-700 w-full p-2 rounded-lg" required></div>
+                                <div><label class="block text-sm mb-1 text-gray-400">Parcelas</label><input type="number" name="parcelas" value="1" min="1" class="bg-gray-700 w-full p-2 rounded-lg" required></div>
+                                <button type="submit" class="md:col-start-4 bg-cyan-500 hover:bg-cyan-600 font-bold py-2 px-4 rounded-lg h-10">Lançar</button>
+                             </form>
+                        </div>
+                        
+                        <div class="border-t border-gray-700 mt-6 pt-4">
+                            <h4 class="text-lg font-semibold mb-3">Fatura Atual</h4>
+                            <div id="fatura-detalhes-${cartao.id}" class="space-y-2">
+                               <p class="text-gray-500">Nenhuma compra na fatura atual.</p>
+                            </div>
+                        </div>
                     `;
                     containerEl.appendChild(cartaoEl);
+
+                    // Adicionar listener para o formulário de compra
+                    const formCompra = document.getElementById(`form-compra-${cartao.id}`);
+                    formCompra.addEventListener('submit', e => {
+                        e.preventDefault();
+                        const comprasRef = collection(db, "users", currentUserId, "cartoes", cartao.id, "compras");
+                        addDoc(comprasRef, {
+                            descricao: formCompra.descricao.value,
+                            valorTotal: parseFloat(formCompra.valor.value),
+                            parcelasTotal: parseInt(formCompra.parcelas.value),
+                            dataCompra: new Date()
+                        });
+                        formCompra.reset();
+                    });
+
+                    // Ouvir as compras deste cartão específico
+                    listenToComprasDoCartao(cartao);
                 });
             });
+        }
+
+        function listenToComprasDoCartao(cartao) {
+            const comprasRef = collection(db, "users", currentUserId, "cartoes", cartao.id, "compras");
+            onSnapshot(query(comprasRef), snapshot => {
+                const compras = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                renderizarDetalhesCartao(cartao, compras);
+            });
+        }
+
+        function renderizarDetalhesCartao(cartao, compras) {
+            const hoje = new Date();
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+
+            // Lógica para definir o período da fatura atual
+            let dataInicioFatura, dataFimFatura;
+            if (hoje.getDate() > cartao.diaFechamento) {
+                dataInicioFatura = new Date(anoAtual, mesAtual - 1, cartao.diaFechamento + 1);
+                dataFimFatura = new Date(anoAtual, mesAtual, cartao.diaFechamento);
+            } else {
+                dataInicioFatura = new Date(anoAtual, mesAtual - 2, cartao.diaFechamento + 1);
+                dataFimFatura = new Date(anoAtual, mesAtual - 1, cartao.diaFechamento);
+            }
+            
+            let totalFaturaAtual = 0;
+            let totalGasto = 0;
+            const detalhesFaturaEl = document.getElementById(`fatura-detalhes-${cartao.id}`);
+            detalhesFaturaEl.innerHTML = '';
+
+            compras.forEach(compra => {
+                const dataCompra = compra.dataCompra.toDate();
+                const valorParcela = compra.valorTotal / compra.parcelasTotal;
+                
+                for (let i = 0; i < compra.parcelasTotal; i++) {
+                    // Calcula o mês de vencimento de cada parcela
+                    let mesVencimentoParcela = dataCompra.getMonth() + 1;
+                    let anoVencimentoParcela = dataCompra.getFullYear();
+
+                    if(dataCompra.getDate() > cartao.diaFechamento) {
+                       mesVencimentoParcela += 1;
+                    }
+                    mesVencimentoParcela += i;
+
+                    while(mesVencimentoParcela > 11) {
+                        mesVencimentoParcela -= 12;
+                        anoVencimentoParcela += 1;
+                    }
+
+                    const dataVencimentoFaturaParcela = new Date(anoVencimentoParcela, mesVencimentoParcela, cartao.diaVencimento);
+
+                    if (dataVencimentoFaturaParcela.getMonth() === (mesAtual) && dataVencimentoFaturaParcela.getFullYear() === anoAtual) {
+                        totalFaturaAtual += valorParcela;
+                        const itemCompraEl = document.createElement('div');
+                        itemCompraEl.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
+                        itemCompraEl.innerHTML = `
+                           <span>${compra.descricao} ${compra.parcelasTotal > 1 ? `(${i + 1}/${compra.parcelasTotal})` : ''}</span>
+                           <span class="font-semibold">${formatarMoeda(valorParcela)}</span>
+                        `;
+                        detalhesFaturaEl.appendChild(itemCompraEl);
+                    }
+                    
+                    // Lógica para total gasto (simplificada para as parcelas futuras)
+                     if(dataVencimentoFaturaParcela > hoje) {
+                        totalGasto += valorParcela;
+                    }
+                }
+            });
+
+            if(detalhesFaturaEl.innerHTML === '') {
+                 detalhesFaturaEl.innerHTML = '<p class="text-gray-500">Nenhuma compra na fatura atual.</p>';
+            }
+            
+            totalGasto += totalFaturaAtual;
+            const limiteDisponivel = cartao.limite - totalGasto;
+            const percentualUso = (totalGasto / cartao.limite) * 100;
+
+            document.getElementById(`fatura-total-${cartao.id}`).textContent = formatarMoeda(totalFaturaAtual);
+            document.getElementById(`limite-disponivel-${cartao.id}`).textContent = formatarMoeda(limiteDisponivel);
+            document.getElementById(`limite-progress-${cartao.id}`).style.width = `${Math.min(percentualUso, 100)}%`;
         }
 
     </script>
