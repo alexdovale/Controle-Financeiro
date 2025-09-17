@@ -6,40 +6,75 @@
     <title>Detalhes das Despesas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } .card-expense-form { display: none; } </style>
+    <style> 
+        body { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab.active { border-color: #06b6d4; color: #06b6d4; }
+    </style>
 </head>
 <body class="bg-gray-900 text-white">
-    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p>Carregando...</p></div>
+    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p>A carregar...</p></div>
 
-    <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-4xl hidden">
+    <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-5xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
-            <div><h1 class="text-3xl font-bold text-cyan-400">Detalhes de Despesas</h1><p id="welcome-message" class="text-gray-400 mt-1"></p></div>
+            <div><h1 class="text-3xl font-bold text-cyan-400">Gerir Finanças</h1></div>
             <div class="flex items-center gap-4">
                 <a href="index.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">&larr; Voltar ao Painel</a>
                 <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Sair</button>
             </div>
         </header>
 
-        <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-bold mb-4">Despesas Gerais</h2>
-            <form id="form-despesa-geral" class="flex flex-col md:flex-row gap-4 items-end mb-6">
-                <div class="w-full"><label for="descricao-geral" class="block mb-2 text-sm text-gray-400">Descrição</label><input type="text" id="descricao-geral" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5" placeholder="Ex: Almoço" required></div>
-                <div class="w-full md:w-1/3"><label for="valor-geral" class="block mb-2 text-sm text-gray-400">Valor (R$)</label><input type="number" id="valor-geral" step="0.01" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5" placeholder="50,00" required></div>
-                <button type="submit" class="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-6 rounded-lg">Adicionar</button>
-            </form>
-            <div id="lista-despesas-gerais" class="space-y-3"></div>
-        </section>
+        <!-- Abas de Navegação -->
+        <div class="mb-6 border-b border-gray-700">
+            <nav class="flex space-x-8" aria-label="Tabs">
+                <button class="tab active py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500" data-tab="despesas">Despesas do Mês</button>
+                <button class="tab py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500" data-tab="cartoes">Cartões de Crédito</button>
+                <button class="tab py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500" data-tab="emprestimos">Empréstimos</button>
+            </nav>
+        </div>
 
-        <section>
-            <h2 class="text-2xl font-bold mb-4">Cartões de Crédito</h2>
-             <div class="bg-gray-800 p-6 rounded-xl shadow-lg mb-6">
-                <form id="form-add-cartao" class="flex flex-col md:flex-row gap-4">
-                    <input type="text" id="nome-cartao" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg w-full p-2.5" placeholder="Nome do Cartão (Ex: Nubank)" required>
-                    <button type="submit" class="w-full md:w-auto bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2.5 px-6 rounded-lg">Adicionar Cartão</button>
+        <!-- Conteúdo das Abas -->
+        <div id="despesas" class="tab-content active">
+             <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                <h2 class="text-2xl font-bold mb-4">Adicionar Despesa</h2>
+                <form id="form-despesa" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mb-6">
+                    <div class="md:col-span-2"><label for="descricao-despesa" class="block mb-2 text-sm text-gray-400">Descrição</label><input type="text" id="descricao-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                    <div><label for="valor-despesa" class="block mb-2 text-sm text-gray-400">Valor (R$)</label><input type="number" id="valor-despesa" step="0.01" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                    <div><label for="tipo-despesa" class="block mb-2 text-sm text-gray-400">Tipo</label><select id="tipo-despesa" class="bg-gray-700 w-full p-2.5 rounded-lg"><option value="variavel">Variável</option><option value="fixa">Fixa</option></select></div>
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
                 </form>
-            </div>
+                <div id="lista-despesas" class="space-y-3"></div>
+            </section>
+        </div>
+
+        <div id="cartoes" class="tab-content">
+            <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                <h2 class="text-2xl font-bold mb-4">Adicionar Novo Cartão</h2>
+                <form id="form-add-cartao" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                    <div class="md:col-span-2"><label class="block text-sm mb-2">Nome</label><input type="text" id="nome-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Nubank UV" required></div>
+                    <div><label class="block text-sm mb-2">Limite</label><input type="number" id="limite-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="5000" required></div>
+                    <div><label class="block text-sm mb-2">Dia Fecho</label><input type="number" id="fechamento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="20" required></div>
+                    <div><label class="block text-sm mb-2">Dia Vencimento</label><input type="number" id="vencimento-cartao" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="27" required></div>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                </form>
+            </section>
             <div id="container-cartoes" class="space-y-6"></div>
-        </section>
+        </div>
+        
+        <div id="emprestimos" class="tab-content">
+             <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                <h2 class="text-2xl font-bold mb-4">Adicionar Empréstimo ou Financiamento</h2>
+                <form id="form-add-emprestimo" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="nome-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Financiamento Carro" required></div>
+                    <div><label class="block text-sm mb-2">Valor Parcela</label><input type="number" id="valor-parcela-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                    <div><label class="block text-sm mb-2">Total de Parcelas</label><input type="number" id="total-parcelas-emprestimo" class="bg-gray-700 w-full p-2.5 rounded-lg" required></div>
+                    <button type="submit" class="md:col-start-4 bg-cyan-500 hover:bg-cyan-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                </form>
+            </section>
+            <div id="container-emprestimos" class="space-y-6"></div>
+        </div>
+
     </div>
 
     <!-- CONFIGURAÇÃO DO FIREBASE -->
@@ -58,126 +93,102 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const loader = document.getElementById('loader');
-        const appContent = document.getElementById('app-content');
         let currentUserId = null;
         
-        const formatarMoeda = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
         onAuthStateChanged(auth, user => {
             if (user) {
                 currentUserId = user.uid;
-                document.getElementById('welcome-message').textContent = `Olá, ${user.email}!`;
-                setupListeners();
-                setupForms();
-                loader.style.display = 'none';
-                appContent.classList.remove('hidden');
+                setupPage();
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('app-content').classList.remove('hidden');
             } else {
                 window.location.href = 'login.html';
             }
         });
 
-        function setupForms() {
+        function setupPage() {
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-            
-            document.getElementById('form-despesa-geral').addEventListener('submit', async e => {
-                e.preventDefault();
-                const form = e.target;
-                const ref = collection(db, "users", currentUserId, "despesasGerais");
-                await addDoc(ref, {
-                    descricao: form['descricao-geral'].value,
-                    valor: parseFloat(form['valor-geral'].value)
+
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tab.dataset.tab).classList.add('active');
                 });
-                form.reset();
             });
 
-            document.getElementById('form-add-cartao').addEventListener('submit', async e => {
+            // Lógica dos formulários
+            const formDespesa = document.getElementById('form-despesa');
+            formDespesa.addEventListener('submit', e => {
                 e.preventDefault();
-                const form = e.target;
+                const ref = collection(db, "users", currentUserId, "despesas");
+                addDoc(ref, {
+                    descricao: formDespesa['descricao-despesa'].value,
+                    valor: parseFloat(formDespesa['valor-despesa'].value),
+                    tipo: formDespesa['tipo-despesa'].value,
+                    data: new Date()
+                });
+                formDespesa.reset();
+            });
+
+            const formCartao = document.getElementById('form-add-cartao');
+            formCartao.addEventListener('submit', e => {
+                 e.preventDefault();
                 const ref = collection(db, "users", currentUserId, "cartoes");
-                await addDoc(ref, { nome: form['nome-cartao'].value });
-                form.reset();
-            });
-        }
-
-        function setupListeners() {
-            // Despesas Gerais
-            onSnapshot(query(collection(db, "users", currentUserId, "despesasGerais")), snapshot => {
-                const despesas = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderDespesasGerais(despesas);
-            });
-            // Cartões
-            onSnapshot(query(collection(db, "users", currentUserId, "cartoes")), snapshot => {
-                renderCartoes(snapshot.docs);
-            });
-        }
-
-        function renderDespesasGerais(despesas) {
-            const listaEl = document.getElementById('lista-despesas-gerais');
-            listaEl.innerHTML = despesas.length === 0 ? '<p class="text-gray-500">Nenhuma despesa geral.</p>' : '';
-            despesas.forEach(d => {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-700 p-3 rounded-lg flex justify-between items-center';
-                div.innerHTML = `<span>${d.descricao}</span><div><span class="font-bold text-red-400">${formatarMoeda(d.valor)}</span><button class="ml-4 text-gray-500 hover:text-red-400 text-sm">X</button></div>`;
-                div.querySelector('button').addEventListener('click', () => deleteDoc(doc(db, "users", currentUserId, "despesasGerais", d.id)));
-                listaEl.appendChild(div);
-            });
-        }
-
-        async function renderCartoes(cartoesDocs) {
-            const containerEl = document.getElementById('container-cartoes');
-            containerEl.innerHTML = '';
-            for (const cartaoDoc of cartoesDocs) {
-                const cartao = { id: cartaoDoc.id, ...cartaoDoc.data() };
-                const despesasRef = collection(db, "users", currentUserId, "cartoes", cartao.id, "despesas");
-                
-                const secaoCartao = document.createElement('div');
-                secaoCartao.className = 'bg-gray-800 p-6 rounded-xl shadow-lg';
-                secaoCartao.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <div><h3 class="text-xl font-bold">${cartao.nome}</h3><p class="text-sm text-gray-400">Total: <span class="font-bold text-red-400" id="total-cartao-${cartao.id}"></span></p></div>
-                        <div><button class="add-despesa-btn bg-cyan-700 hover:bg-cyan-800 text-xs font-bold py-1 px-3 rounded-md mr-2">+</button><button class="remove-cartao-btn bg-red-800 hover:bg-red-700 text-xs font-bold py-1 px-3 rounded-md">Remover</button></div>
-                    </div>
-                    <form class="mb-4 card-expense-form"><div class="flex flex-col md:flex-row gap-4 items-end"><div class="w-full"><input type="text" name="descricao" class="bg-gray-700 border border-gray-600 text-sm rounded-lg w-full p-2" placeholder="Descrição" required></div><div class="w-full md:w-1/4"><input type="number" name="valor" step="0.01" class="bg-gray-700 border border-gray-600 text-sm rounded-lg w-full p-2" placeholder="Valor" required></div><button type="submit" class="w-full md:w-auto bg-red-500 hover:bg-red-600 font-bold py-2 px-5 rounded-lg text-sm">Adicionar</button></div></form>
-                    <div class="lista-despesas space-y-2"></div>`;
-                
-                // Eventos dos botões do cartão
-                secaoCartao.querySelector('.remove-cartao-btn').addEventListener('click', () => deleteDoc(doc(db, "users", currentUserId, "cartoes", cartao.id)));
-                const formDespesa = secaoCartao.querySelector('form');
-                secaoCartao.querySelector('.add-despesa-btn').addEventListener('click', () => formDespesa.style.display = formDespesa.style.display === 'block' ? 'none' : 'block');
-                formDespesa.addEventListener('submit', async e => {
-                    e.preventDefault();
-                    await addDoc(despesasRef, { descricao: e.target.descricao.value, valor: parseFloat(e.target.valor.value) });
-                    e.target.reset();
+                 addDoc(ref, {
+                    nome: formCartao['nome-cartao'].value,
+                    limite: parseFloat(formCartao['limite-cartao'].value),
+                    diaFechamento: parseInt(formCartao['fechamento-cartao'].value),
+                    diaVencimento: parseInt(formCartao['vencimento-cartao'].value),
                 });
-
-                // Listener para despesas do cartão
-                onSnapshot(query(despesasRef), despesasSnapshot => {
-                    const despesas = despesasSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    const total = despesas.reduce((acc, d) => acc + d.valor, 0);
-                    secaoCartao.querySelector(`#total-cartao-${cartao.id}`).textContent = formatarMoeda(total);
-                    const listaDespesasEl = secaoCartao.querySelector('.lista-despesas');
-                    listaDespesasEl.innerHTML = despesas.length === 0 ? '<p class="text-gray-500 text-sm">Nenhuma despesa neste cartão.</p>' : '';
-                    despesas.forEach(d => {
-                        const div = document.createElement('div');
-                        div.className = 'bg-gray-700 p-2 rounded-md flex justify-between items-center text-sm';
-                        div.innerHTML = `<span>${d.descricao}</span><div><span class="font-semibold">${formatarMoeda(d.valor)}</span><button class="ml-3 text-gray-500 hover:text-red-400 text-xs">X</button></div>`;
-                        div.querySelector('button').addEventListener('click', () => deleteDoc(doc(despesasRef, d.id)));
-                        listaDespesasEl.appendChild(div);
-                    });
-                });
-                
-                containerEl.appendChild(secaoCartao);
-            }
+                formCartao.reset();
+            });
+            
+            // Listeners para os dados
+            listenToDespesas();
+            listenToCartoes();
         }
+
+        function listenToDespesas() {
+            const despesasRef = collection(db, "users", currentUserId, "despesas");
+            onSnapshot(query(despesasRef), snapshot => {
+                const despesas = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                const listaEl = document.getElementById('lista-despesas');
+                listaEl.innerHTML = despesas.length ? '' : '<p class="text-gray-500">Nenhuma despesa este mês.</p>';
+                // A lógica de renderização iria aqui
+            });
+        }
+        
+        function listenToCartoes() {
+            const cartoesRef = collection(db, "users", currentUserId, "cartoes");
+            onSnapshot(query(cartoesRef), snapshot => {
+                const containerEl = document.getElementById('container-cartoes');
+                containerEl.innerHTML = ''; // Limpar antes de renderizar
+                snapshot.docs.forEach(cartaoDoc => {
+                    const cartao = { id: cartaoDoc.id, ...cartaoDoc.data() };
+                    const cartaoEl = document.createElement('div');
+                    cartaoEl.className = 'bg-gray-700 p-6 rounded-xl';
+                    // Template do cartão (simplificado)
+                    cartaoEl.innerHTML = `
+                        <h3 class="text-xl font-bold">${cartao.nome}</h3>
+                        <p>Limite: R$ ${cartao.limite.toFixed(2)}</p>
+                        <!-- Mais detalhes e forms iriam aqui -->
+                    `;
+                    containerEl.appendChild(cartaoEl);
+                });
+            });
+        }
+
     </script>
-
 </body>
 </html>
 
