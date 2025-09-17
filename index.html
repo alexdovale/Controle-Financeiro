@@ -22,6 +22,39 @@
             </div>
             <div class="flex items-center gap-4">
                 <a href="detalhes.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">Gerir Finanças &rarr;</a>
+                
+                <!-- Gamification Popover -->
+                <div class="relative">
+                    <button id="toggle-gamification-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded-lg text-2xl leading-none flex items-center justify-center">🏆</button>
+                    
+                    <div id="gamification-panel" class="hidden absolute right-0 mt-2 w-80 md:w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-30 p-4">
+                        <div class="space-y-4">
+                             <!-- Níveis de Jornada -->
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <h3 class="font-bold text-lg mb-2">📊 Níveis de Jornada</h3>
+                                <div class="flex items-center gap-4">
+                                    <span id="journey-level-icon" class="text-4xl"></span>
+                                    <div>
+                                        <p id="journey-level-title" class="font-semibold"></p>
+                                        <p id="journey-level-message" class="text-sm text-gray-300"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Conquistas de Economia -->
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <h3 class="font-bold text-lg mb-2">🏆 Conquistas de Economia</h3>
+                                <div class="flex items-center gap-4">
+                                    <span id="savings-level-icon" class="text-4xl"></span>
+                                    <div>
+                                        <p id="savings-level-title" class="font-semibold"></p>
+                                        <p id="savings-level-message" class="text-sm text-gray-300"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Sair</button>
             </div>
         </header>
@@ -49,35 +82,6 @@
             </div>
         </section>
         
-        <!-- Painel Gamificado -->
-        <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-            <h2 class="text-2xl font-bold mb-4 text-cyan-400">🎮 Painel Gamificado</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Níveis de Jornada -->
-                <div class="bg-gray-700 p-4 rounded-lg">
-                    <h3 class="font-bold text-lg mb-2">📊 Níveis de Jornada</h3>
-                    <div class="flex items-center gap-4">
-                        <span id="journey-level-icon" class="text-4xl"></span>
-                        <div>
-                            <p id="journey-level-title" class="font-semibold"></p>
-                            <p id="journey-level-message" class="text-sm text-gray-300"></p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Conquistas de Economia -->
-                <div class="bg-gray-700 p-4 rounded-lg">
-                    <h3 class="font-bold text-lg mb-2">🏆 Conquistas de Economia</h3>
-                     <div class="flex items-center gap-4">
-                        <span id="savings-level-icon" class="text-4xl"></span>
-                        <div>
-                            <p id="savings-level-title" class="font-semibold"></p>
-                            <p id="savings-level-message" class="text-sm text-gray-300"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Cadastro de Renda -->
         <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
             <h2 class="text-2xl font-bold mb-4">Adicionar Renda</h2>
@@ -239,6 +243,17 @@
                 container.classList.toggle('hidden');
                 e.target.textContent = container.classList.contains('hidden') ? 'Mostrar' : 'Ocultar';
             });
+            
+            const gamificationBtn = document.getElementById('toggle-gamification-btn');
+            const gamificationPanel = document.getElementById('gamification-panel');
+            gamificationBtn.addEventListener('click', () => {
+                gamificationPanel.classList.toggle('hidden');
+            });
+            document.addEventListener('click', (event) => {
+                if (!gamificationBtn.contains(event.target) && !gamificationPanel.contains(event.target)) {
+                    gamificationPanel.classList.add('hidden');
+                }
+            });
 
             const formReceita = document.getElementById('form-add-receita');
             formReceita.addEventListener('submit', e => {
@@ -260,7 +275,6 @@
         }
 
         async function fetchEvolutionData() {
-            // ... (código existente sem alterações)
             if (!currentUserId) return;
             const labels = [], receitasData = [], despesasData = [];
             
@@ -309,7 +323,6 @@
         }
 
         function fetchCurrentMonthData() {
-            // ... (código existente com pequenas alterações para chamar a função de gamificação)
             if (!currentUserId) return;
             let totalReceitas = 0, totalDespesasGerais = 0, totalFaturas = 0, totalEmprestimos = 0;
             const mesAtual = currentDate.getMonth(), anoAtual = currentDate.getFullYear();
