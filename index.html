@@ -48,6 +48,35 @@
                 <p id="saldo-mes" class="text-4xl font-bold">R$ 0,00</p>
             </div>
         </section>
+        
+        <!-- Painel Gamificado -->
+        <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-cyan-400">🎮 Painel Gamificado</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Níveis de Jornada -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-bold text-lg mb-2">📊 Níveis de Jornada</h3>
+                    <div class="flex items-center gap-4">
+                        <span id="journey-level-icon" class="text-4xl"></span>
+                        <div>
+                            <p id="journey-level-title" class="font-semibold"></p>
+                            <p id="journey-level-message" class="text-sm text-gray-300"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Conquistas de Economia -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-bold text-lg mb-2">🏆 Conquistas de Economia</h3>
+                     <div class="flex items-center gap-4">
+                        <span id="savings-level-icon" class="text-4xl"></span>
+                        <div>
+                            <p id="savings-level-title" class="font-semibold"></p>
+                            <p id="savings-level-message" class="text-sm text-gray-300"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Cadastro de Renda -->
         <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
@@ -125,7 +154,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -135,6 +164,26 @@
         let currentDate = new Date();
         let despesasChart = null;
         let evolucaoChart = null;
+        let userActivity = { hasDespesas: false, hasCartoes: false, hasEmprestimos: false };
+
+        const gamificationData = {
+            journey: [
+                { icon: '🧭', title: 'Nível 1 – Explorador Financeiro', message: "👏 Você começou a mapear seus gastos. Bora descobrir onde está o tesouro escondido do seu bolso? 💰" },
+                { icon: '🏹', title: 'Nível 2 – Caçador de Despesas', message: "🔥 Você já está de olho nas suas faturas e não deixa nada passar batido." },
+                { icon: '🛡️', title: 'Nível 3 – Guardião do Dinheiro', message: "⚔️ Protegendo suas finanças como um mestre. O vilão da dívida que lute! 😅" },
+                { icon: '🧠', title: 'Nível 4 – Estrategista das Finanças', message: "🎯 Planejamento em alta! Você já pensa no futuro e domina suas metas." },
+                { icon: '👑', title: 'Nível 5 – Mestre Jedi das Despesas', message: "🚀 UAU! Controle total. Que a força do orçamento esteja com você! ✨" }
+            ],
+            savings: [
+                 { icon: '🥉', title: 'Ainda sem conquistas', message: "Comece a economizar para ganhar sua primeira medalha!" },
+                 { icon: '⭐', title: 'Economizou 10% do salário', message: "👏 Primeira vitória! A pizza do fim do mês tá garantida 🍕." },
+                 { icon: '⭐⭐', title: 'Economizou 20% do salário', message: "🔥 Já dá pra bancar aquele rolê surpresa. 🎉" },
+                 { icon: '⭐⭐⭐', title: 'Economizou 30% do salário', message: "⚡ Boletos estão começando a temer seu nome. 😎" },
+                 { icon: '⭐⭐⭐⭐', title: 'Economizou 40% do salário', message: "💪 Sua conta bancária já sorri quando você abre o app." },
+                 { icon: '⭐⭐⭐⭐⭐', title: 'Economizou 50% do salário', message: "🚀 Você entrou no hall da fama dos mestres do dinheiro. 🏆💰" }
+            ]
+        };
+        
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         onAuthStateChanged(auth, user => {
@@ -165,6 +214,16 @@
             evolucaoChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [ { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.7)', borderColor: '#10b981', borderWidth: 1 }, { label: 'Despesas', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 1 } ] }, options: { responsive: true, scales: { y: { ticks: { color: 'white' } }, x: { ticks: { color: 'white' } } }, plugins: { legend: { labels: { color: 'white' } } } } });
         }
 
+        async function checkUserActivity() {
+            const despesasSnap = await getDocs(query(collection(db, "users", currentUserId, "despesas"), limit(1)));
+            const cartoesSnap = await getDocs(query(collection(db, "users", currentUserId, "cartoes"), limit(1)));
+            const emprestimosSnap = await getDocs(query(collection(db, "users", currentUserId, "emprestimos"), limit(1)));
+            
+            userActivity.hasDespesas = !despesasSnap.empty;
+            userActivity.hasCartoes = !cartoesSnap.empty;
+            userActivity.hasEmprestimos = !emprestimosSnap.empty;
+        }
+        
         function setupPage() {
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
             document.getElementById('prev-month').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); updateMonthDisplay(); });
@@ -188,17 +247,20 @@
                     descricao: formReceita['descricao-receita'].value,
                     valor: parseFloat(formReceita['valor-receita'].value),
                     data: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-                });
+                }).then(() => checkUserActivity());
                 formReceita.reset();
             });
 
             initializePieChart();
             initializeBarChart();
-            updateMonthDisplay();
-            fetchEvolutionData();
+            checkUserActivity().then(() => {
+                updateMonthDisplay();
+                fetchEvolutionData();
+            });
         }
 
         async function fetchEvolutionData() {
+            // ... (código existente sem alterações)
             if (!currentUserId) return;
             const labels = [], receitasData = [], despesasData = [];
             
@@ -247,6 +309,7 @@
         }
 
         function fetchCurrentMonthData() {
+            // ... (código existente com pequenas alterações para chamar a função de gamificação)
             if (!currentUserId) return;
             let totalReceitas = 0, totalDespesasGerais = 0, totalFaturas = 0, totalEmprestimos = 0;
             const mesAtual = currentDate.getMonth(), anoAtual = currentDate.getFullYear();
@@ -311,6 +374,34 @@
                 });
                 updateTotals();
             }
+            
+            function updateGamificationPanel(totalReceitas, saldo) {
+                // Lógica da Jornada
+                let journeyLevel = 0; // Nível 1 por padrão
+                if(userActivity.hasDespesas) journeyLevel = 1;
+                if(userActivity.hasCartoes) journeyLevel = 2;
+                if(userActivity.hasEmprestimos) journeyLevel = 4; // Pulei pro 5 pra ter mais impacto
+                
+                const journeyInfo = gamificationData.journey[journeyLevel];
+                document.getElementById('journey-level-icon').textContent = journeyInfo.icon;
+                document.getElementById('journey-level-title').textContent = journeyInfo.title;
+                document.getElementById('journey-level-message').textContent = journeyInfo.message;
+                
+                // Lógica de Economia
+                let savingsLevel = 0;
+                if (totalReceitas > 0) {
+                    const percentage = (saldo / totalReceitas) * 100;
+                    if (percentage >= 50) savingsLevel = 5;
+                    else if (percentage >= 40) savingsLevel = 4;
+                    else if (percentage >= 30) savingsLevel = 3;
+                    else if (percentage >= 20) savingsLevel = 2;
+                    else if (percentage >= 10) savingsLevel = 1;
+                }
+                const savingsInfo = gamificationData.savings[savingsLevel];
+                document.getElementById('savings-level-icon').textContent = savingsInfo.icon;
+                document.getElementById('savings-level-title').textContent = savingsInfo.title;
+                document.getElementById('savings-level-message').textContent = savingsInfo.message;
+            }
 
             function updateTotals() {
                 const totalDespesas = totalDespesasGerais + totalFaturas + totalEmprestimos;
@@ -325,6 +416,8 @@
                     despesasChart.data.datasets[0].data = [totalDespesasGerais, totalFaturas, totalEmprestimos];
                     despesasChart.update();
                 }
+                
+                updateGamificationPanel(totalReceitas, saldo);
             }
         }
     </script>
