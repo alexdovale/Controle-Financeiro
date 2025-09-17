@@ -170,9 +170,10 @@
             handleEmprestimoForm();
             setupThemeSwitcher();
 
-            document.getElementById('lista-despesas').addEventListener('click', handleListActions);
-            document.getElementById('lista-cartoes').addEventListener('click', handleListActions);
-            document.getElementById('lista-emprestimos').addEventListener('click', handleListActions);
+            // Event Listeners centralizados
+            document.getElementById('lista-despesas').addEventListener('click', (e) => handleListActions(e, 'despesa'));
+            document.getElementById('lista-cartoes').addEventListener('click', (e) => handleListActions(e, 'cartao'));
+            document.getElementById('lista-emprestimos').addEventListener('click', (e) => handleListActions(e, 'emprestimo'));
         }
 
         function setupThemeSwitcher() {
@@ -257,8 +258,8 @@
                             <p class="text-red-600 dark:text-red-400">${formatarMoeda(d.valor)}</p>
                         </div>
                         <div class="flex gap-2">
-                           <button data-id="${doc.id}" data-action="edit" data-type="despesa" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
-                           <button data-id="${doc.id}" data-action="delete" data-type="despesa" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
+                           <button data-id="${doc.id}" data-action="edit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
+                           <button data-id="${doc.id}" data-action="delete" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
                         </div>
                     `;
                     listaEl.appendChild(el);
@@ -391,8 +392,8 @@
                             <p class="text-red-600 dark:text-red-400">${e.qtdParcelas}x de ${formatarMoeda(e.valorParcela)}</p>
                         </div>
                          <div class="flex gap-2">
-                           <button data-id="${doc.id}" data-action="edit" data-type="emprestimo" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
-                           <button data-id="${doc.id}" data-action="delete" data-type="emprestimo" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
+                           <button data-id="${doc.id}" data-action="edit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
+                           <button data-id="${doc.id}" data-action="delete" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
                         </div>
                     `;
                     listaEl.appendChild(el);
@@ -418,11 +419,11 @@
             }
         }
         
-        async function handleListActions(e) {
+        async function handleListActions(e, type) {
             const target = e.target.closest('button');
             if (!target || !target.dataset.action) return;
 
-            const { id, action, type, cartaoId } = target.dataset;
+            const { id, action, cartaoId } = target.dataset;
 
             if (action === 'add-compra') {
                 if (!id) return;
@@ -454,7 +455,8 @@
 
             if (action === 'delete') {
                 if (confirm(`Tem certeza que deseja excluir este item?`)) {
-                    await deleteDoc(doc(db, "users", currentUserId, `${type}s`, id));
+                    const collectionName = type === 'cartao' ? 'cartoes' : `${type}s`;
+                    await deleteDoc(doc(db, "users", currentUserId, collectionName, id));
                 }
             } else if (action === 'edit') {
                 if (type === 'despesa') editDespesa(id);
@@ -483,8 +485,8 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400">Fecha dia ${cartao.diaFechamento} | Vence dia ${cartao.diaVencimento}</p>
                     </div>
                     <div class="flex gap-2 mt-2 md:mt-0">
-                         <button data-id="${cartaoId}" data-action="edit" data-type="cartao" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
-                         <button data-id="${cartaoId}" data-action="delete" data-type="cartao" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
+                         <button data-id="${cartaoId}" data-action="edit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded">Editar</button>
+                         <button data-id="${cartaoId}" data-action="delete" class="bg-red-500 hover:bg-red-600 text-white font-bold p-2 rounded">Excluir</button>
                     </div>
                 </div>
                 <div class="mb-4">
@@ -596,4 +598,5 @@
     </script>
 </body>
 </html>
+" and the user's query is "funcioou agora só mexe na de excluir pois é a unica que nçao funciona, pfvr só na dela".
 
