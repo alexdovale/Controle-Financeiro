@@ -1,34 +1,63 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Painel Financeiro</title>
+    <title>Login - Controle Financeiro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <script>
+        // Aplica o tema imediatamente para evitar "flash" de cores
+        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark')
+        } else {
+            document.documentElement.classList.add('dark')
+        }
+    </script>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
-    <div class="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 class="text-3xl font-bold text-cyan-400 text-center mb-6">Painel Financeiro</h1>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white flex items-center justify-center min-h-screen p-4 transition-colors duration-300">
+    
+    <!-- Seletor de Tema no Canto -->
+    <div class="absolute top-4 right-4">
+        <div class="relative">
+            <button id="theme-menu-button" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+            </button>
+            <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20">
+                <p class="p-3 text-sm font-semibold text-gray-500 dark:text-gray-400">Modo de Exibição</p>
+                <button data-theme="dark" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Escuro</button>
+                <button data-theme="light" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Claro</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold text-center text-cyan-600 dark:text-cyan-400 mb-2">Bem-vindo(a) de volta!</h1>
+        <p class="text-center text-gray-600 dark:text-gray-400 mb-6">Acesse seu painel financeiro.</p>
+
         <form id="login-form">
             <div class="mb-4">
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-400">Email</label>
-                <input type="email" id="email" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="seu@email.com" required>
+                <label for="email" class="block mb-2 text-sm font-medium">Email</label>
+                <input type="email" id="email" class="bg-gray-200 dark:bg-gray-700 border-none text-gray-800 dark:text-white text-sm rounded-lg focus:ring-2 focus:ring-cyan-500 block w-full p-2.5" placeholder="seuemail@exemplo.com" required>
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-sm font-medium text-gray-400">Senha</label>
-                <input type="password" id="password" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5" placeholder="•••••••••" required>
+                <label for="password" class="block mb-2 text-sm font-medium">Senha</label>
+                <input type="password" id="password" class="bg-gray-200 dark:bg-gray-700 border-none text-gray-800 dark:text-white text-sm rounded-lg focus:ring-2 focus:ring-cyan-500 block w-full p-2.5" required>
             </div>
-            <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg transition-colors mb-4">Entrar</button>
-            <p id="error-message" class="text-red-500 text-sm text-center mb-4 h-4"></p>
-            <p class="text-sm text-center text-gray-400">
-                Não tem uma conta? <a href="cadastro.html" class="font-medium text-cyan-400 hover:underline">Cadastre-se</a>
-            </p>
+            
+            <p id="error-message" class="text-red-500 text-sm mb-4 text-center"></p>
+
+            <button type="submit" class="w-full text-white bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Entrar</button>
         </form>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
+            Ainda não tem uma conta? <a href="cadastro.html" class="font-medium text-cyan-600 dark:text-cyan-400 hover:underline">Cadastre-se</a>
+        </p>
     </div>
 
-    <!-- CONFIGURAÇÃO DO FIREBASE -->
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyAvUqbV2e0ewur3G7VQExREDuWbopb6pNU",
@@ -40,14 +69,10 @@
         measurementId: "G-F1JCZNV7BX"
       };
     </script>
-    <!-- FIM DA CONFIGURAÇÃO DO FIREBASE -->
-
-    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        // Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
@@ -56,25 +81,51 @@
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            errorMessage.textContent = '';
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            errorMessage.textContent = ''; 
+            
+            const email = loginForm['email'].value;
+            const password = loginForm['password'].value;
 
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // Login bem-sucedido, redireciona para o painel principal
                     window.location.href = 'index.html';
                 })
                 .catch((error) => {
-                    // Trata os erros de login
+                    console.error("Erro de login:", error.code, error.message);
                     if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                         errorMessage.textContent = 'E-mail ou senha inválidos.';
+                        errorMessage.textContent = 'Email ou senha inválidos.';
                     } else {
-                         errorMessage.textContent = 'Ocorreu um erro ao fazer login.';
+                        errorMessage.textContent = 'Ocorreu um erro. Tente novamente.';
                     }
-                    console.error("Erro de login:", error);
                 });
+        });
+
+        // Lógica do Seletor de Tema
+        const themeMenuButton = document.getElementById('theme-menu-button');
+        const themeMenu = document.getElementById('theme-menu');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        themeMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', () => {
+            themeMenu.classList.add('hidden');
+        });
+
+        themeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const theme = option.dataset.theme;
+                if (theme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+                themeMenu.classList.add('hidden');
+            });
         });
     </script>
 </body>
