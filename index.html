@@ -5,76 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Financeiro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
+    <style> 
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
 <body class="bg-gray-900 text-white">
-    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50">
-        <p>A carregar...</p>
-    </div>
+    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p>A carregar...</p></div>
 
     <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-cyan-400">Painel Financeiro</h1>
-                <p id="welcome-message" class="text-gray-400 mt-1"></p>
+                <h1 class="text-3xl font-bold text-cyan-400">Meu Painel Financeiro</h1>
+                <p class="text-gray-400">Olá, <span id="user-email"></span>!</p>
             </div>
             <div class="flex items-center gap-4">
-                <a href="detalhes.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Gerir Despesas</a>
-                <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Sair</button>
+                <a href="detalhes.html" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg">Gerir Finanças &rarr;</a>
+                <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Sair</button>
             </div>
         </header>
-        
-        <!-- Seletor de Mês -->
-        <section class="mb-8 flex justify-center items-center gap-4">
-            <button id="prev-month-btn" class="p-2 rounded-md bg-gray-700 hover:bg-gray-600">&lt;</button>
+
+        <!-- Navegação de Mês -->
+        <div class="flex justify-center items-center gap-4 mb-8">
+            <button id="prev-month" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">&lt;</button>
             <h2 id="current-month-year" class="text-2xl font-bold text-center"></h2>
-            <button id="next-month-btn" class="p-2 rounded-md bg-gray-700 hover:bg-gray-600">&gt;</button>
-        </section>
+            <button id="next-month" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">&gt;</button>
+        </div>
 
-        <!-- Cards de Resumo -->
+        <!-- Resumo Financeiro -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Receitas do Mês</h2><p id="total-receitas" class="text-4xl font-bold text-green-400">R$ 0,00</p></div>
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Despesas do Mês</h2><p id="total-despesas" class="text-4xl font-bold text-red-400">R$ 0,00</p></div>
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg"><h2 class="text-xl font-semibold text-gray-400 mb-2">Balanço do Mês</h2><p id="balanco-mes" class="text-4xl font-bold text-gray-300">R$ 0,00</p></div>
-        </section>
-
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Coluna Esquerda: Gráficos e Renda -->
-            <div class="lg:col-span-2 space-y-6">
-                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">Evolução dos Gastos</h3>
-                    <canvas id="expenses-line-chart"></canvas>
-                </div>
-                <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">Despesas por Categoria</h3>
-                    <canvas id="expenses-pie-chart"></canvas>
-                </div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-400 mb-2">Total de Receitas</h3>
+                <p id="total-receitas" class="text-4xl font-bold text-green-400">R$ 0,00</p>
             </div>
-
-            <!-- Coluna Direita: Renda e Alertas -->
-            <div class="space-y-6">
-                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold mb-2">Comprometimento da Renda</h3>
-                    <p class="text-gray-400 text-sm mb-4">Quanto da sua renda já está comprometida com despesas fixas e parcelas.</p>
-                    <div class="w-full bg-gray-700 rounded-full h-4 mb-2">
-                        <div id="renda-progress" class="bg-orange-500 h-4 rounded-full" style="width: 0%"></div>
-                    </div>
-                    <p id="renda-percent" class="text-center font-bold text-2xl">0%</p>
-                </div>
-                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-                    <h3 class="text-xl font-bold mb-4">Alertas e Notificações</h3>
-                    <div id="alertas-container" class="space-y-3">
-                         <p class="text-gray-500">Nenhum alerta no momento.</p>
-                    </div>
-                </div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-400 mb-2">Total de Despesas</h3>
+                <p id="total-despesas" class="text-4xl font-bold text-red-400">R$ 0,00</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-400 mb-2">Saldo do Mês</h3>
+                <p id="saldo-mes" class="text-4xl font-bold">R$ 0,00</p>
             </div>
         </section>
+
+        <!-- Cadastro de Renda -->
+        <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold mb-4">Adicionar Renda</h2>
+            <form id="form-add-receita" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-receita" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="Ex: Salário" required></div>
+                <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-receita" step="0.01" class="bg-gray-700 w-full p-2.5 rounded-lg" placeholder="3000" required></div>
+                <button type="submit" class="bg-green-500 hover:bg-green-600 font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+            </form>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Coluna de Receitas e Despesas do Mês -->
+            <div>
+                 <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                    <h3 class="text-xl font-bold mb-4">Receitas do Mês</h3>
+                    <div id="lista-receitas" class="space-y-3"></div>
+                </section>
+                <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Despesas do Mês (Geral)</h3>
+                    <div id="lista-despesas-mes" class="space-y-3"></div>
+                </section>
+            </div>
+            <!-- Coluna de Faturas e Empréstimos -->
+             <div>
+                <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+                    <h3 class="text-xl font-bold mb-4">Faturas de Cartão (Mês Atual)</h3>
+                    <div id="lista-faturas" class="space-y-3"></div>
+                </section>
+                <section class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold mb-4">Parcelas de Empréstimos (Mês Atual)</h3>
+                    <div id="lista-emprestimos" class="space-y-3"></div>
+                </section>
+            </div>
+        </div>
 
     </div>
 
-    <!-- CONFIGURAÇÃO DO FIREBASE -->
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyAvUqbV2e0ewur3G7VQExREDuWbopb6pNU",
@@ -90,143 +100,193 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const loader = document.getElementById('loader');
-        const appContent = document.getElementById('app-content');
         let currentUserId = null;
         let currentDate = new Date();
-        
-        let pieChart, lineChart;
-
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         onAuthStateChanged(auth, user => {
             if (user) {
                 currentUserId = user.uid;
-                document.getElementById('welcome-message').textContent = `Olá, ${user.email}!`;
-                setupUI();
-                listenToData();
-                loader.style.display = 'none';
-                appContent.classList.remove('hidden');
+                document.getElementById('user-email').textContent = user.email;
+                setupPage();
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('app-content').classList.remove('hidden');
             } else {
                 window.location.href = 'login.html';
             }
         });
         
-        function setupUI() {
+        function updateMonthDisplay() {
+            const monthYear = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+            document.getElementById('current-month-year').textContent = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+            fetchAllData();
+        }
+
+        function setupPage() {
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-            document.getElementById('prev-month-btn').addEventListener('click', () => {
+            document.getElementById('prev-month').addEventListener('click', () => {
                 currentDate.setMonth(currentDate.getMonth() - 1);
-                updateDateDisplay();
+                updateMonthDisplay();
             });
-            document.getElementById('next-month-btn').addEventListener('click', () => {
+            document.getElementById('next-month').addEventListener('click', () => {
                 currentDate.setMonth(currentDate.getMonth() + 1);
-                updateDateDisplay();
+                updateMonthDisplay();
             });
-            updateDateDisplay();
+
+            const formReceita = document.getElementById('form-add-receita');
+            formReceita.addEventListener('submit', e => {
+                e.preventDefault();
+                const ref = collection(db, "users", currentUserId, "receitas");
+                addDoc(ref, {
+                    descricao: formReceita['descricao-receita'].value,
+                    valor: parseFloat(formReceita['valor-receita'].value),
+                    data: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+                });
+                formReceita.reset();
+            });
+            updateMonthDisplay();
         }
 
-        function updateDateDisplay() {
-            const monthName = currentDate.toLocaleString('pt-BR', { month: 'long' });
-            const year = currentDate.getFullYear();
-            document.getElementById('current-month-year').textContent = `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} de ${year}`;
-            // Disparar atualização dos dados ao mudar a data
-            listenToData();
-        }
-        
-        function listenToData() {
+        function fetchAllData() {
             if (!currentUserId) return;
+
+            let totalReceitas = 0;
+            let totalDespesasGerais = 0;
+            let totalFaturas = 0;
+            let totalEmprestimos = 0;
             
-            // Listener para Receitas, Despesas, etc...
-            // A lógica aqui ficaria muito mais complexa, agregando dados por mês
-            // Para simplicidade, vamos usar snapshots e filtrar no cliente por enquanto
+            const mesAtual = currentDate.getMonth();
+            const anoAtual = currentDate.getFullYear();
+            const inicioMes = new Date(anoAtual, mesAtual, 1);
+            const fimMes = new Date(anoAtual, mesAtual + 1, 0);
+
+            // Fetch Receitas
             const receitasRef = collection(db, "users", currentUserId, "receitas");
+            onSnapshot(query(receitasRef, where("data", ">=", inicioMes), where("data", "<=", fimMes)), snapshot => {
+                const listaEl = document.getElementById('lista-receitas');
+                listaEl.innerHTML = snapshot.empty ? '<p class="text-gray-500">Nenhuma receita este mês.</p>' : '';
+                totalReceitas = 0;
+                snapshot.docs.forEach(doc => {
+                    const receita = {id: doc.id, ...doc.data()};
+                    totalReceitas += receita.valor;
+                    const el = document.createElement('div');
+                    el.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
+                    el.innerHTML = `<span>${receita.descricao}</span><span class="font-semibold text-green-400">${formatarMoeda(receita.valor)}</span>`;
+                    listaEl.appendChild(el);
+                });
+                updateTotals();
+            });
+
+            // Fetch Despesas Gerais
             const despesasRef = collection(db, "users", currentUserId, "despesas");
-            // Adicionar refs para cartões e empréstimos
-            
-            onSnapshot(query(receitasRef), snapshot => {
-                const allReceitas = snapshot.docs.map(d => d.data());
-                updateDashboard(allReceitas, []); // Passar outras fontes de dados aqui
+            onSnapshot(query(despesasRef, where("data", ">=", inicioMes), where("data", "<=", fimMes)), snapshot => {
+                const listaEl = document.getElementById('lista-despesas-mes');
+                listaEl.innerHTML = snapshot.empty ? '<p class="text-gray-500">Nenhuma despesa este mês.</p>' : '';
+                totalDespesasGerais = 0;
+                snapshot.docs.forEach(doc => {
+                    const despesa = {id: doc.id, ...doc.data()};
+                    totalDespesasGerais += despesa.valor;
+                    const el = document.createElement('div');
+                    el.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
+                    el.innerHTML = `<span>${despesa.descricao}</span><span class="font-semibold text-red-400">${formatarMoeda(despesa.valor)}</span>`;
+                    listaEl.appendChild(el);
+                });
+                updateTotals();
             });
 
-             onSnapshot(query(despesasRef), snapshot => {
-                const allDespesas = snapshot.docs.map(d => d.data());
-                 // Isso é um exemplo, a lógica real precisará de todos os dados
-                const allReceitas = []; // Obtenha as receitas novamente ou armazene-as
-                updateDashboard(allReceitas, allDespesas);
+            // Fetch Empréstimos
+            const emprestimosRef = collection(db, "users", currentUserId, "emprestimos");
+            onSnapshot(query(emprestimosRef), snapshot => {
+                const listaEl = document.getElementById('lista-emprestimos');
+                 listaEl.innerHTML = snapshot.empty ? '<p class="text-gray-500">Nenhum empréstimo ativo.</p>' : '';
+                totalEmprestimos = 0;
+                snapshot.docs.forEach(doc => {
+                    const emprestimo = {id: doc.id, ...doc.data()};
+                    totalEmprestimos += emprestimo.valorParcela;
+                     const el = document.createElement('div');
+                    el.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
+                    el.innerHTML = `<span>${emprestimo.nome}</span><span class="font-semibold text-red-400">${formatarMoeda(emprestimo.valorParcela)}</span>`;
+                    listaEl.appendChild(el);
+                });
+                updateTotals();
             });
-        }
 
-        function updateDashboard(allReceitas, allDespesas) {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+            // Fetch Cartões e Compras (mais complexo)
+            const cartoesRef = collection(db, "users", currentUserId, "cartoes");
+            onSnapshot(query(cartoesRef), cartoesSnapshot => {
+                 const listaEl = document.getElementById('lista-faturas');
+                 listaEl.innerHTML = cartoesSnapshot.empty ? '<p class="text-gray-500">Nenhum cartão cadastrado.</p>' : '';
+                totalFaturas = 0;
+                cartoesSnapshot.docs.forEach(cartaoDoc => {
+                    const cartao = { id: cartaoDoc.id, ...cartaoDoc.data() };
+                    const comprasRef = collection(db, "users", currentUserId, "cartoes", cartao.id, "compras");
+                    
+                    onSnapshot(query(comprasRef), comprasSnapshot => {
+                        let faturaCartaoAtual = 0;
+                        comprasSnapshot.docs.forEach(compraDoc => {
+                            const compra = compraDoc.data();
+                            const dataCompra = compra.dataCompra.toDate();
+                            const valorParcela = compra.valorTotal / compra.parcelasTotal;
+                            for (let i = 0; i < compra.parcelasTotal; i++) {
+                                let mesVencimentoParcela = dataCompra.getMonth();
+                                let anoVencimentoParcela = dataCompra.getFullYear();
+                                if (dataCompra.getDate() > cartao.diaFechamento) { mesVencimentoParcela += 1; }
+                                mesVencimentoParcela += i;
+                                while (mesVencimentoParcela > 11) {
+                                    mesVencimentoParcela -= 12;
+                                    anoVencimentoParcela += 1;
+                                }
+                                if (mesVencimentoParcela === mesAtual && anoVencimentoParcela === anoAtual) {
+                                    faturaCartaoAtual += valorParcela;
+                                }
+                            }
+                        });
 
-            // Filtrar por mês
-            const receitasMes = allReceitas.filter(r => r.data && new Date(r.data.seconds * 1000).getMonth() === month && new Date(r.data.seconds * 1000).getFullYear() === year);
-            const despesasMes = allDespesas.filter(d => d.data && new Date(d.data.seconds * 1000).getMonth() === month && new Date(d.data.seconds * 1000).getFullYear() === year);
-            
-            // Faltaria somar faturas de cartão e parcelas de empréstimos do mês
-            
-            const totalReceitas = receitasMes.reduce((acc, r) => acc + r.valor, 0);
-            const totalDespesas = despesasMes.reduce((acc, d) => acc + d.valor, 0);
-            const balanco = totalReceitas - totalDespesas;
-            
-            document.getElementById('total-receitas').textContent = formatarMoeda(totalReceitas);
-            document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesas);
-            document.getElementById('balanco-mes').textContent = formatarMoeda(balanco);
-            
-            if(balanco < 0) {
-                 document.getElementById('balanco-mes').classList.remove('text-gray-300', 'text-green-400');
-                 document.getElementById('balanco-mes').classList.add('text-red-400');
-            } else {
-                 document.getElementById('balanco-mes').classList.remove('text-gray-300', 'text-red-400');
-                 document.getElementById('balanco-mes').classList.add('text-green-400');
+                        const elId = `fatura-${cartao.id}`;
+                        let faturaEl = document.getElementById(elId);
+                        if (!faturaEl) {
+                           faturaEl = document.createElement('div');
+                           faturaEl.id = elId;
+                           faturaEl.className = 'flex justify-between items-center bg-gray-700 p-2 rounded';
+                           listaEl.appendChild(faturaEl);
+                        }
+                        faturaEl.innerHTML = `<span>${cartao.nome}</span><span class="font-semibold text-red-400">${formatarMoeda(faturaCartaoAtual)}</span>`;
+                        
+                        // Recalcular total de todas as faturas
+                        recalcularTotalFaturas();
+                    });
+                });
+                 if (!cartoesSnapshot.empty) {
+                     recalcularTotalFaturas();
+                 }
+            });
+
+            function recalcularTotalFaturas() {
+                totalFaturas = 0;
+                document.querySelectorAll('#lista-faturas > div').forEach(el => {
+                    const valorTexto = el.querySelector('span:last-child').textContent.replace('R$', '').replace('.', '').replace(',', '.').trim();
+                    totalFaturas += parseFloat(valorTexto);
+                });
+                updateTotals();
             }
-            
-            updateCharts(despesasMes);
-        }
-        
-        function updateCharts(despesas) {
-            const ctxPie = document.getElementById('expenses-pie-chart').getContext('2d');
-            const ctxLine = document.getElementById('expenses-line-chart').getContext('2d');
 
-            // Agregação de dados para os gráficos
-            const despesasPorCategoria = despesas.reduce((acc, d) => {
-                acc[d.categoria] = (acc[d.categoria] || 0) + d.valor;
-                return acc;
-            }, {});
-            
-            if (pieChart) pieChart.destroy();
-            pieChart = new Chart(ctxPie, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(despesasPorCategoria),
-                    datasets: [{
-                        data: Object.values(despesasPorCategoria),
-                        backgroundColor: ['#f87171', '#fb923c', '#fbbf24', '#a3e635', '#4ade80', '#34d399', '#22d3ee', '#60a5fa', '#818cf8', '#c084fc'],
-                    }]
-                }
-            });
-
-             if (lineChart) lineChart.destroy();
-            // Para o gráfico de linha, precisaríamos de dados históricos
-            lineChart = new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    labels: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho"], // Exemplo
-                    datasets: [{
-                        label: 'Gastos Totais',
-                        data: [1200, 1900, 1500, 2100, 1800, 1950], // Exemplo
-                        borderColor: '#22d3ee',
-                        tension: 0.1
-                    }]
-                }
-            });
+            function updateTotals() {
+                const totalDespesas = totalDespesasGerais + totalFaturas + totalEmprestimos;
+                const saldo = totalReceitas - totalDespesas;
+                
+                document.getElementById('total-receitas').textContent = formatarMoeda(totalReceitas);
+                document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesas);
+                const saldoEl = document.getElementById('saldo-mes');
+                saldoEl.textContent = formatarMoeda(saldo);
+                saldoEl.classList.toggle('text-green-400', saldo >= 0);
+                saldoEl.classList.toggle('text-red-400', saldo < 0);
+            }
         }
     </script>
 </body>
