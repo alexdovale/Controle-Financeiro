@@ -132,6 +132,8 @@
         let editingDespesaId = null;
         let editingCartaoId = null;
         let editingEmprestimoId = null;
+        let editingCompraState = { cartaoId: null, compraId: null };
+
 
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         
@@ -447,6 +449,42 @@
                 form.scrollIntoView({ behavior: 'smooth' });
             }
         }
+
+        function resetCompraForm(cartaoId) {
+            const form = document.getElementById(`form-compra-${cartaoId}`);
+            form.reset();
+            const addButton = form.querySelector('button[data-action="add-compra"]');
+            addButton.textContent = 'Adicionar';
+            const cancelButton = document.getElementById(`btn-cancel-edit-compra-${cartaoId}`);
+            if(cancelButton) cancelButton.classList.add('hidden');
+            editingCompraState = { cartaoId: null, compraId: null };
+        }
+        
+        async function editCompra(cartaoId, compraId) {
+            const docRef = doc(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`, compraId);
+            const docSnap = await getDoc(docRef);
+
+            if(docSnap.exists()){
+                const data = docSnap.data();
+                const form = document.getElementById(`form-compra-${cartaoId}`);
+                form.querySelector('[name="descricao-compra"]').value = data.descricao;
+                form.querySelector('[name="valor-compra"]').value = data.valorTotal;
+                form.querySelector('[name="parcelas-compra"]').value = data.parcelasTotal;
+
+                const dataCompra = data.dataCompra.toDate();
+                const year = dataCompra.getFullYear();
+                const month = (dataCompra.getMonth() + 1).toString().padStart(2, '0');
+                form.querySelector('[name="data-inicio-compra"]').value = `${year}-${month}`;
+
+                const addButton = form.querySelector('button[data-action="add-compra"]');
+                addButton.textContent = 'Salvar';
+                const cancelButton = document.getElementById(`btn-cancel-edit-compra-${cartaoId}`);
+                if(cancelButton) cancelButton.classList.remove('hidden');
+
+                editingCompraState = { cartaoId, compraId };
+                 form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
         
         async function handleListActions(e) {
             const target = e.target.closest('button[data-action]');
@@ -475,8 +513,13 @@
                     alert("Por favor, preencha a descrição e o valor da compra.");
                     return;
                 }
-                await addDoc(collection(db, `users/${currentUserId}/cartoes/${id}/compras`), data);
-                form.reset();
+                
+                if (editingCompraState.compraId && editingCompraState.cartaoId === id) {
+                    await updateDoc(doc(db, `users/${currentUserId}/cartoes/${id}/compras`, editingCompraState.compraId), data);
+                } else {
+                    await addDoc(collection(db, `users/${currentUserId}/cartoes/${id}/compras`), data);
+                }
+                resetCompraForm(id);
                 return;
             }
 
@@ -486,6 +529,12 @@
                     await deleteDoc(doc(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`, id));
                  }
                  return;
+            }
+
+            if(action === 'edit-compra'){
+                if (!id || !cartaoId) return;
+                editCompra(cartaoId, id);
+                return;
             }
             
             if (!id || !currentType) return;
@@ -556,12 +605,17 @@
                         </div>
                         <button type="button" data-id="${cartaoId}" data-action="add-compra" class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-2.5 rounded-lg h-10">Adicionar</button>
                      </form>
+                      <button id="btn-cancel-edit-compra-${cartaoId}" class="hidden mt-2 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg w-full">Cancelar Edição</button>
                 </div>
                  <div class="border-t border-gray-200 dark:border-gray-600 mt-4 pt-4">
                      <h4 class="font-bold mb-2">Histórico de Compras</h4>
                      <div id="lista-compras-${cartaoId}" class="space-y-2"></div>
                  </div>
             `;
+
+             // Event listener for the cancel button of this specific card
+            const cancelBtn = document.getElementById(`btn-cancel-edit-compra-${cartaoId}`);
+            cancelBtn.addEventListener('click', () => resetCompraForm(cartaoId));
 
             onSnapshot(query(collection(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`)), (comprasSnapshot) => {
                 const listaComprasEl = document.getElementById(`lista-compras-${cartaoId}`);
@@ -617,7 +671,8 @@
                         </div>
                         <div class="flex items-center gap-2 self-end sm:self-center">
                             <span class="font-semibold">${formatarMoeda(compra.valorTotal)}</span>
-                            <button data-id="${compra.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="text-red-500 hover:text-red-400 dark:text-red-400 dark:hover:text-red-300">✖</button>
+                            <button data-id="${compra.id}" data-cartao-id="${cartaoId}" data-action="edit-compra" class="p-1 text-yellow-500 hover:text-yellow-400">✏️</button>
+                            <button data-id="${compra.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="p-1 text-red-500 hover:text-red-400 dark:text-red-400 dark:hover:text-red-300">✖</button>
                         </div>
                     `;
                     fragment.appendChild(compraEl);
@@ -640,4 +695,5 @@
     </script>
 </body>
 </html>
+"
 
