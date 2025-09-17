@@ -6,6 +6,7 @@
     <title>Painel Financeiro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style> 
         body { font-family: 'Inter', sans-serif; }
     </style>
@@ -45,6 +46,14 @@
             <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                 <h3 class="text-lg font-semibold text-gray-400 mb-2">Saldo do Mês</h3>
                 <p id="saldo-mes" class="text-4xl font-bold">R$ 0,00</p>
+            </div>
+        </section>
+
+        <!-- Gráfico de Despesas -->
+        <section class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold mb-4">Composição das Despesas</h2>
+            <div class="max-w-md mx-auto">
+                <canvas id="despesasChart"></canvas>
             </div>
         </section>
 
@@ -108,6 +117,7 @@
 
         let currentUserId = null;
         let currentDate = new Date();
+        let despesasChart = null;
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         onAuthStateChanged(auth, user => {
@@ -126,6 +136,43 @@
             const monthYear = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
             document.getElementById('current-month-year').textContent = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
             fetchAllData();
+        }
+
+        function initializeChart() {
+            const ctx = document.getElementById('despesasChart').getContext('2d');
+            despesasChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Despesas Gerais', 'Faturas de Cartão', 'Empréstimos'],
+                    datasets: [{
+                        label: 'Distribuição de Despesas',
+                        data: [0, 0, 0],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)',  // red-500
+                            'rgba(59, 130, 246, 0.7)', // blue-500
+                            'rgba(234, 179, 8, 0.7)'   // yellow-500
+                        ],
+                        borderColor: [
+                            '#1f2937',
+                            '#1f2937',
+                            '#1f2937'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                font: { size: 14 }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function setupPage() {
@@ -150,6 +197,7 @@
                 });
                 formReceita.reset();
             });
+            initializeChart();
             updateMonthDisplay();
         }
 
@@ -258,7 +306,6 @@
                         }
                         faturaEl.innerHTML = `<span>${cartao.nome}</span><span class="font-semibold text-red-400">${formatarMoeda(faturaCartaoAtual)}</span>`;
                         
-                        // Recalcular total de todas as faturas
                         recalcularTotalFaturas();
                     });
                 });
@@ -286,6 +333,11 @@
                 saldoEl.textContent = formatarMoeda(saldo);
                 saldoEl.classList.toggle('text-green-400', saldo >= 0);
                 saldoEl.classList.toggle('text-red-400', saldo < 0);
+
+                if (despesasChart) {
+                    despesasChart.data.datasets[0].data = [totalDespesasGerais, totalFaturas, totalEmprestimos];
+                    despesasChart.update();
+                }
             }
         }
     </script>
