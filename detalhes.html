@@ -577,50 +577,51 @@
                 
                 let faturaAtual = 0;
                 let limiteUsado = 0;
-                const mesAtual = new Date().getMonth();
-                const anoAtual = new Date().getFullYear();
+                
+                const hoje = new Date();
+                const diaDoMes = hoje.getDate();
+                const mesAtual = hoje.getMonth() + 1;
+                const anoAtual = hoje.getFullYear();
 
+                const mesFechamento = cartao.diaFechamento;
+                
                 const fragment = document.createDocumentFragment();
                 
                 let comprasArray = [];
                 comprasSnapshot.forEach(doc => comprasArray.push({id: doc.id, ...doc.data()}));
                 
                 comprasArray.sort((a, b) => {
-                    const dateA = a.dataCompra ? a.dataCompra.toDate() : 0;
-                    const dateB = b.dataCompra ? b.dataCompra.toDate() : 0;
+                    const dateA = a.dataCompra ? a.dataCompra.toDate() : new Date();
+                    const dateB = b.dataCompra ? b.dataCompra.toDate() : new Date();
                     return dateB - dateA;
                 });
 
                 comprasArray.forEach(compra => {
                     
                     limiteUsado += compra.valorTotal;
-
+                    
                     const valorParcela = compra.valorTotal / compra.parcelasTotal;
                     
-                    // Cálculo da fatura atual baseado na data de fechamento e mês de início da compra
                     const [anoInicioCompra, mesInicioCompra] = compra.mesInicio.split('-').map(Number);
-                    const hoje = new Date();
-                    const anoAtual = hoje.getFullYear();
-                    const mesAtual = hoje.getMonth() + 1;
                     
                     const mesesPassados = (anoAtual - anoInicioCompra) * 12 + (mesAtual - mesInicioCompra);
                     
-                    const mesDeFechamento = cartao.diaFechamento;
-                    const diaDoMes = hoje.getDate();
-                    
                     if (mesesPassados >= 0 && mesesPassados < compra.parcelasTotal) {
-                        let mesDaParcela = mesInicioCompra + mesesPassados;
-                        let anoDaParcela = anoInicioCompra;
-                        while(mesDaParcela > 12) {
-                            mesDaParcela -= 12;
-                            anoDaParcela++;
+                        const mesCobranca = (mesInicioCompra + mesesPassados - 1) % 12 + 1;
+                        const anoCobranca = anoInicioCompra + Math.floor((mesInicioCompra + mesesPassados - 1) / 12);
+
+                        let mesFatura;
+                        let anoFatura;
+                        if (diaDoMes > mesFechamento) {
+                            mesFatura = mesAtual;
+                            anoFatura = anoAtual;
+                        } else {
+                            mesFatura = (mesAtual === 1) ? 12 : mesAtual - 1;
+                            anoFatura = (mesAtual === 1) ? anoAtual - 1 : anoAtual;
                         }
 
-                        // Verifica se a parcela atual está no período de fechamento da fatura
-                        if (mesDaParcela === mesAtual && anoDaParcela === anoAtual && diaDoMes > mesDeFechamento) {
-                           faturaAtual += valorParcela;
-                        } else if (mesDaParcela === mesAtual -1 && anoDaParcela === anoAtual && diaDoMes <= mesDeFechamento) {
-                           faturaAtual += valorParcela;
+                        if (mesCobranca === mesFatura && anoCobranca === anoFatura) {
+                            faturaAtual += valorParcela;
                         }
                     }
 
