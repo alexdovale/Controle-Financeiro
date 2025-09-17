@@ -98,7 +98,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, setDoc, getDoc, serverTimestamp, updateDoc, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, setDoc, getDoc, serverTimestamp, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -437,35 +437,29 @@
                 </div>
                 <div class="border-t border-gray-600 pt-4">
                      <h4 class="font-bold mb-3">Adicionar Compra</h4>
-                     <form id="form-compra-${cartaoId}" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm mb-1">Descrição</label>
-                                <input type="text" name="descricao-compra" class="bg-gray-600 w-full p-2 rounded-lg" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm mb-1">Valor Total</label>
-                                <input type="number" step="0.01" name="valor-compra" class="bg-gray-600 w-full p-2 rounded-lg" required>
-                            </div>
+                     <form id="form-compra-${cartaoId}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm mb-1">Descrição</label>
+                            <input type="text" name="descricao-compra" class="bg-gray-600 w-full p-2 rounded-lg" required>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-                            <div>
-                                <label class="block text-sm mb-1">Parcelas</label>
-                                <input type="number" name="parcelas-compra" class="bg-gray-600 w-full p-2 rounded-lg" min="1" placeholder="1">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <button type="button" data-id="${cartaoId}" data-action="add-compra" class="bg-blue-500 hover:bg-blue-600 font-bold p-2.5 rounded-lg w-full h-full">Adicionar Compra</button>
-                            </div>
+                        <div>
+                            <label class="block text-sm mb-1">Valor Total</label>
+                            <input type="number" step="0.01" name="valor-compra" class="bg-gray-600 w-full p-2 rounded-lg" required>
                         </div>
+                        <div>
+                            <label class="block text-sm mb-1">Parcelas</label>
+                            <input type="number" name="parcelas-compra" class="bg-gray-600 w-full p-2 rounded-lg" min="1" placeholder="1">
+                        </div>
+                        <button type="button" data-id="${cartaoId}" data-action="add-compra" class="bg-blue-500 hover:bg-blue-600 font-bold p-2.5 rounded-lg h-10">Adicionar</button>
                      </form>
                 </div>
                  <div class="border-t border-gray-600 mt-4 pt-4">
-                     <h4 class="font-bold mb-2">Compras na Fatura Atual</h4>
+                     <h4 class="font-bold mb-2">Histórico de Compras</h4>
                      <div id="lista-compras-${cartaoId}" class="space-y-2"></div>
                  </div>
             `;
 
-            onSnapshot(query(collection(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`)), (comprasSnapshot) => {
+            onSnapshot(query(collection(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`), orderBy('dataCompra', 'desc')), (comprasSnapshot) => {
                 const listaComprasEl = document.getElementById(`lista-compras-${cartaoId}`);
                 listaComprasEl.innerHTML = '';
                 
@@ -474,15 +468,15 @@
                 const mesAtual = new Date().getMonth();
                 const anoAtual = new Date().getFullYear();
 
+                const fragment = document.createDocumentFragment();
+
                 comprasSnapshot.forEach(compraDoc => {
                     const compra = compraDoc.data();
-                    if (!compra.dataCompra) return; // Proteção para dados antigos
+                    if (!compra.dataCompra) return; 
                     const dataCompra = compra.dataCompra.toDate();
                     
-                    // Calcula limite usado total
                     limiteUsado += compra.valorTotal;
 
-                    // Calcula valor na fatura atual
                     const valorParcela = compra.valorTotal / compra.parcelasTotal;
                     for (let i = 0; i < compra.parcelasTotal; i++) {
                         let mesVencimento = dataCompra.getMonth();
@@ -500,29 +494,30 @@
                         
                         if (mesVencimento === mesAtual && anoVencimento === anoAtual) {
                             faturaAtual += valorParcela;
-                            
-                            const compraEl = document.createElement('div');
-                            compraEl.className = 'flex justify-between items-center bg-gray-600 p-2 rounded text-sm';
-                            compraEl.innerHTML = `
-                                <div>
-                                    <span>${compra.descricao}</span>
-                                    <span class="text-gray-400 ml-2">(Parc. ${i + 1}/${compra.parcelasTotal})</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span>${formatarMoeda(valorParcela)}</span>
-                                    <button data-id="${compraDoc.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="text-red-400 hover:text-red-300">✖</button>
-                                </div>
-                            `;
-                            listaComprasEl.appendChild(compraEl);
                         }
                     }
+
+                    const compraEl = document.createElement('div');
+                    compraEl.className = 'flex justify-between items-center bg-gray-600 p-2 rounded text-sm';
+                    compraEl.innerHTML = `
+                        <div>
+                            <span>${compra.descricao}</span>
+                            <span class="text-gray-400 ml-2">(${compra.parcelasTotal}x de ${formatarMoeda(valorParcela)})</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold">${formatarMoeda(compra.valorTotal)}</span>
+                            <button data-id="${compraDoc.id}" data-cartao-id="${cartaoId}" data-action="delete-compra" class="text-red-400 hover:text-red-300">✖</button>
+                        </div>
+                    `;
+                    fragment.appendChild(compraEl);
                 });
                 
-                if (listaComprasEl.innerHTML === '') {
-                    listaComprasEl.innerHTML = '<p class="text-sm text-gray-500">Nenhuma compra na fatura deste mês.</p>';
+                listaComprasEl.appendChild(fragment);
+
+                if (!listaComprasEl.hasChildNodes()) {
+                    listaComprasEl.innerHTML = '<p class="text-sm text-gray-500">Nenhuma compra registrada.</p>';
                 }
 
-                // Atualiza UI do cartão
                 document.getElementById(`fatura-atual-${cartaoId}`).textContent = `Fatura Atual: ${formatarMoeda(faturaAtual)}`;
                 const limiteDisponivel = cartao.limite - limiteUsado;
                 document.getElementById(`limite-disponivel-${cartaoId}`).textContent = `Disponível: ${formatarMoeda(limiteDisponivel)}`;
