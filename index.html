@@ -9,6 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style> 
         body { font-family: 'Inter', sans-serif; }
+        .graph-btn-active {
+            background-color: #06b6d4 !important; /* cyan-600 */
+            color: white !important;
+        }
+        .dark .graph-btn-active {
+            background-color: #0891b2 !important; /* cyan-500 */
+        }
     </style>
     <script>
         // Aplica o tema imediatamente para evitar "flash" de cores
@@ -171,35 +178,34 @@
         </div>
         
         <!-- Seção de Gráficos -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Gráfico de Composição -->
-            <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl sm:text-2xl font-bold">Composição das Despesas</h2>
-                    <button id="toggle-pie-chart" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                <h2 class="text-xl sm:text-2xl font-bold">Análise Gráfica</h2>
+                <div class="flex items-center gap-2 p-1 bg-gray-200 dark:bg-gray-700 rounded-lg">
+                    <button data-chart-type="composition" class="graph-btn graph-btn-active px-3 py-1 text-sm font-semibold rounded-md">Composição</button>
+                    <button data-chart-type="evolution" class="graph-btn px-3 py-1 text-sm font-semibold rounded-md">Evolução</button>
                 </div>
-                <div id="pie-chart-container" class="max-w-md mx-auto">
+            </div>
+            <div id="composition-chart-container">
+                <h3 class="text-center font-semibold mb-2">Composição das Despesas</h3>
+                 <div class="max-w-md mx-auto">
                     <canvas id="despesasChart"></canvas>
                 </div>
-            </section>
-            <!-- Gráfico de Evolução -->
-             <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-                    <h2 class="text-xl sm:text-2xl font-bold">Evolução Mensal</h2>
-                    <div class="flex items-center gap-4">
-                        <select id="evolution-range" class="bg-gray-200 dark:bg-gray-700 text-sm rounded-lg p-1 border-none focus:ring-2 focus:ring-cyan-500">
-                            <option value="3">Últimos 3 meses</option>
-                            <option value="6" selected>Últimos 6 meses</option>
-                            <option value="12">Últimos 12 meses</option>
-                        </select>
-                        <button id="toggle-bar-chart" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
-                    </div>
-                </div>
-                <div id="bar-chart-container">
+            </div>
+            <div id="evolution-chart-container" class="hidden">
+                 <div class="flex justify-between items-center mb-2">
+                     <h3 class="text-center font-semibold">Evolução Mensal</h3>
+                     <select id="evolution-range" class="bg-gray-200 dark:bg-gray-700 text-sm rounded-lg p-1 border-none focus:ring-2 focus:ring-cyan-500">
+                        <option value="3">3 meses</option>
+                        <option value="6" selected>6 meses</option>
+                        <option value="12">12 meses</option>
+                    </select>
+                 </div>
+                 <div>
                     <canvas id="evolucaoChart"></canvas>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
     </div>
 
@@ -431,8 +437,6 @@
             setupToggle('toggle-lista-despesas', 'lista-despesas-container');
             setupToggle('toggle-lista-faturas', 'lista-faturas-container');
             setupToggle('toggle-lista-emprestimos', 'lista-emprestimos-container');
-            setupToggle('toggle-pie-chart', 'pie-chart-container');
-            setupToggle('toggle-bar-chart', 'bar-chart-container');
             
             const gamificationBtn = document.getElementById('toggle-gamification-btn');
             const gamificationPanel = document.getElementById('gamification-panel');
@@ -447,6 +451,21 @@
             });
 
             document.getElementById('evolution-range').addEventListener('change', fetchEvolutionData);
+
+            document.querySelectorAll('.graph-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.graph-btn').forEach(b => b.classList.remove('graph-btn-active'));
+                    e.target.classList.add('graph-btn-active');
+                    const chartType = e.target.dataset.chartType;
+                    if(chartType === 'composition'){
+                        document.getElementById('composition-chart-container').classList.remove('hidden');
+                        document.getElementById('evolution-chart-container').classList.add('hidden');
+                    } else {
+                        document.getElementById('composition-chart-container').classList.add('hidden');
+                        document.getElementById('evolution-chart-container').classList.remove('hidden');
+                    }
+                });
+            });
 
             const formReceita = document.getElementById('form-add-receita');
             formReceita.addEventListener('submit', e => {
@@ -644,7 +663,7 @@
                 document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesas);
                 const saldoEl = document.getElementById('saldo-mes');
                 saldoEl.textContent = formatarMoeda(saldo);
-                saldoEl.className = `text-4xl font-bold ${saldo >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`;
+                saldoEl.className = `text-3xl sm:text-4xl font-bold ${saldo >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`;
                 
                 if (despesasChart) {
                     despesasChart.data.datasets[0].data = [totalDespesasGerais, totalFaturas, totalEmprestimos];
