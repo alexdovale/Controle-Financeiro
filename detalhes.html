@@ -59,6 +59,12 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Controle total sobre suas despesas, cartões e empréstimos.</p>
             </div>
             <div class="flex items-center gap-3">
+                <!-- BOTÃO VOLTAR AO PAINEL -->
+                <a href="index.html" class="bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-900/30 dark:hover:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 font-medium py-2.5 px-4 rounded-xl text-sm transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Voltar ao Painel
+                </a>
+
                 <!-- Seletor de Tema -->
                 <div class="relative">
                     <button id="theme-menu-button" class="p-2.5 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
@@ -358,7 +364,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
         
         let hasSetupListeners = false;
 
-        // --- STREAMING_CHUNK:Inicializando Autenticação e Eventos Base... ---
+        // --- Inicializando Autenticação e Eventos Base ---
         onAuthStateChanged(auth, user => {
             const authContainer = document.getElementById('auth-container');
             const loader = document.getElementById('loader');
@@ -475,7 +481,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             loadEmprestimos();
         }
 
-        // --- STREAMING_CHUNK:Lógica da aba de Despesas... ---
+        // --- Lógica da aba de Despesas ---
         function handleDespesaForm() {
             const form = document.getElementById('form-add-despesa');
             form.addEventListener('submit', async (e) => {
@@ -537,8 +543,8 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                             </div>
                         </div>
                         <div class="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                           <button type="button" data-id="${doc.id}" data-action="edit" data-type="despesa" class="p-2 bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-cyan-600 rounded-lg transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                           <button type="button" data-id="${doc.id}" data-action="delete" data-type="despesa" class="p-2 bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-red-500 rounded-lg transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            <button type="button" data-id="${doc.id}" data-action="edit" data-type="despesa" class="p-2 bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-cyan-600 rounded-lg transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                            <button type="button" data-id="${doc.id}" data-action="delete" data-type="despesa" class="p-2 bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:text-red-500 rounded-lg transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                         </div>
                     `;
                     listaEl.appendChild(el);
@@ -546,7 +552,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             });
         }
 
-        // --- STREAMING_CHUNK:Lógica base de Cartões de Crédito... ---
+        // --- Lógica base de Cartões de Crédito ---
         function handleCartaoForm() {
             const form = document.getElementById('form-add-cartao');
             form.addEventListener('submit', async (e) => {
@@ -609,7 +615,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             });
         }
 
-        // --- STREAMING_CHUNK:Renderizando detalhes dinâmicos do Cartão... ---
+        // Renderizando detalhes dinâmicos do Cartão
         // Cria apenas a estrutura visual sem interagir com as compras ainda
         function renderCartaoShell(cartaoId, cartao, listaEl) {
             const cartaoContainer = document.createElement('div');
@@ -668,7 +674,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                         </button>
                      </div>
 
-                     <!-- Opções de Modo de Adição (O segredo do formulário versátil) -->
+                     <!-- Opções de Modo de Adição -->
                      <div class="flex flex-wrap gap-x-6 gap-y-2 mb-4 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-xl inline-flex w-full sm:w-auto border border-gray-100 dark:border-gray-700">
                         <label class="flex items-center gap-2 cursor-pointer group flex-1 sm:flex-none">
                             <input type="radio" name="modo-compra-${cartaoId}" value="total" checked class="modo-compra-radio w-4 h-4 text-cyan-600 focus:ring-cyan-500 border-gray-300">
@@ -706,7 +712,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                             <input type="number" name="parcelas-compra" class="w-full p-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none text-center" min="1" placeholder="1">
                         </div>
                         
-                        <!-- Campos Modo Parcela (A alternativa solicitada) -->
+                        <!-- Campos Modo Parcela -->
                         <div class="campo-modo-parcela-${cartaoId} hidden md:col-span-2 lg:col-span-2">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" title="Valor de uma única parcela">Valor Parc.</label>
                             <input type="number" step="0.01" min="0.01" name="valor-parcela-unica" class="w-full p-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none" placeholder="0.00">
@@ -763,7 +769,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             });
         }
 
-        // --- STREAMING_CHUNK:Lógica de Cálculo e Listagem de Compras... ---
+        // --- Lógica de Cálculo e Listagem de Compras ---
         function iniciarMonitoramentoCompras(cartaoId, cartao) {
             const q = query(collection(db, `users/${currentUserId}/cartoes/${cartaoId}/compras`));
             
@@ -776,7 +782,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                 
                 let faturaAtual = 0;
                 let limiteUsado = 0;
-                let resumoDonos = {}; // NOVO: Objeto para guardar os gastos de cada dono
+                let resumoDonos = {}; // Objeto para guardar os gastos de cada dono
                 const dataHoje = new Date();
                 const mesAtual = dataHoje.getMonth();
                 const anoAtual = dataHoje.getFullYear();
@@ -816,13 +822,13 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                         
                         if (mesVencimento === mesAtual && anoVencimento === anoAtual) {
                             faturaAtual += valorParcela;
-                            // NOVO: Adiciona ao resumo do dono
+                            // Adiciona ao resumo do dono
                             const dono = compra.dono || 'Eu';
                             resumoDonos[dono] = (resumoDonos[dono] || 0) + valorParcela;
                         }
                     }
 
-                    // NOVO: Badge visual do dono da compra
+                    // Badge visual do dono da compra
                     const donoBadge = (compra.dono && compra.dono.toLowerCase() !== 'eu') 
                         ? `<span class="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 text-[10px] px-2 py-0.5 rounded-full ml-2 shrink-0 border border-purple-200 dark:border-purple-800">${compra.dono}</span>` 
                         : '';
@@ -872,7 +878,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     else barEl.className = 'bg-gradient-to-r from-blue-500 to-cyan-400 h-full transition-all duration-1000';
                 }
 
-                // NOVO: Atualizar a visualização da divisão da fatura por donos
+                // Atualizar a visualização da divisão da fatura por donos
                 const resumoContainer = document.getElementById(`resumo-donos-${cartaoId}`);
                 const resumoLista = document.getElementById(`resumo-donos-lista-${cartaoId}`);
                 if (resumoContainer && resumoLista) {
@@ -904,7 +910,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             });
         }
 
-        // --- STREAMING_CHUNK:Lógica para Inserir e Editar Compras (Os dois Modos)... ---
+        // --- Lógica para Inserir e Editar Compras (Os dois Modos) ---
         function resetCompraForm(cartaoId) {
             const form = document.getElementById(`form-compra-${cartaoId}`);
             if(!form) return;
@@ -974,7 +980,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             }
         }
 
-        // --- STREAMING_CHUNK:Lógica Avançada de Importação de Fatura... ---
+        // --- Lógica Avançada de Importação de Fatura ---
         function setupImportModal() {
             const modal = document.getElementById('modal-import-fatura');
             const fechar = () => {
@@ -1183,7 +1189,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             }
         }
 
-        // --- STREAMING_CHUNK:Roteador Global de Ações (Cliques nos botões gerados dinamicamente)... ---
+        // --- Roteador Global de Ações (Cliques nos botões gerados dinamicamente) ---
         async function handleListActions(e) {
             const target = e.target.closest('button[data-action]');
             if (!target) return;
@@ -1343,7 +1349,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             }
         }
 
-        // --- STREAMING_CHUNK:Lógicas da Aba de Empréstimos... ---
+        // --- Lógicas da Aba de Empréstimos ---
         function handleEmprestimoForm() {
             const form = document.getElementById('form-add-emprestimo');
             const tipoSelect = document.getElementById('tipo-emprestimo');
