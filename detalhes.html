@@ -30,6 +30,26 @@
         <p class="text-white font-medium">Sincronizando dados...</p>
     </div>
 
+    <div id="auth-container" class="fixed inset-0 bg-gray-50 dark:bg-gray-900 z-[100] flex items-center justify-center hidden">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl max-w-md w-full border border-gray-100 dark:border-gray-700 m-4">
+            <h2 class="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-600 to-blue-500 bg-clip-text text-transparent">Login / Registrar</h2>
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Email</label>
+                    <input type="email" id="auth-email" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 transition-all" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Senha</label>
+                    <input type="password" id="auth-password" class="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 transition-all" required>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="btn-login" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 rounded-xl transition-colors shadow-sm">Entrar</button>
+                    <button type="button" id="btn-register" class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-3 rounded-xl transition-colors shadow-sm">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="toast-container" class="fixed bottom-4 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
 
     <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden opacity-0 transition-opacity duration-500">
@@ -211,9 +231,10 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     
                     <div class="hidden md:grid grid-cols-12 gap-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
                         <span class="col-span-1 text-center">Inc.</span>
-                        <span class="col-span-5">Descrição Reconhecida</span>
+                        <span class="col-span-4">Descrição Reconhecida</span>
+                        <span class="col-span-2 text-center">De Quem?</span>
                         <span class="col-span-2 text-right">Valor</span>
-                        <span class="col-span-4 text-center">Parcelamento (Atual / Total)</span>
+                        <span class="col-span-3 text-center">Parcelamento (At. / Tot.)</span>
                     </div>
                     
                     <div id="import-preview-lista" class="space-y-3 mb-2"></div>
@@ -260,7 +281,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
     </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, setDoc, getDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
@@ -335,27 +356,53 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
         // --- Formatação ---
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         
+        let hasSetupListeners = false;
+
         // --- STREAMING_CHUNK:Inicializando Autenticação e Eventos Base... ---
         onAuthStateChanged(auth, user => {
+            const authContainer = document.getElementById('auth-container');
+            const loader = document.getElementById('loader');
+            const appContent = document.getElementById('app-content');
+
             if (user) {
+                authContainer.classList.add('hidden');
                 currentUserId = user.uid;
-                setupEventListeners();
+                
+                if (!hasSetupListeners) {
+                    setupEventListeners();
+                    hasSetupListeners = true;
+                }
+                
                 loadAllData();
                 
                 // Animação de entrada
-                const loader = document.getElementById('loader');
                 loader.classList.add('opacity-0');
                 setTimeout(() => {
                     loader.style.display = 'none';
-                    const appContent = document.getElementById('app-content');
                     appContent.classList.remove('hidden');
                     requestAnimationFrame(() => appContent.classList.remove('opacity-0'));
                 }, 500);
 
             } else {
-                // Redirecionamento simplificado sem alert se não logado
-                window.location.href = 'login.html'; 
+                loader.style.display = 'none';
+                appContent.classList.add('hidden');
+                appContent.classList.add('opacity-0');
+                authContainer.classList.remove('hidden');
             }
+        });
+
+        document.getElementById('btn-login').addEventListener('click', () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-password').value;
+            if(!email || !pass) return showToast('Preencha email e senha', 'warning');
+            signInWithEmailAndPassword(auth, email, pass).catch(err => showToast('Erro ao entrar: ' + err.message, 'error'));
+        });
+
+        document.getElementById('btn-register').addEventListener('click', () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-password').value;
+            if(!email || !pass) return showToast('Preencha email e senha', 'warning');
+            createUserWithEmailAndPassword(auth, email, pass).catch(err => showToast('Erro ao registrar: ' + err.message, 'error'));
         });
         
         function setupEventListeners() {
@@ -603,6 +650,12 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                             <div id="limite-usado-bar-${cartaoId}" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full transition-all duration-1000 w-0"></div>
                          </div>
                          <p class="text-[10px] text-gray-400 text-right mt-1">Limite Total: ${formatarMoeda(cartao.limite)}</p>
+
+                         <!-- Resumo de Donos (Divisão de despesas) -->
+                         <div id="resumo-donos-${cartaoId}" class="mt-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl p-3 hidden border border-gray-100 dark:border-gray-700">
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 border-b border-gray-200 dark:border-gray-700 pb-1 flex justify-between"><span>Divisão da Fatura Atual</span> <span>Dono</span></p>
+                            <div id="resumo-donos-lista-${cartaoId}" class="space-y-1.5"></div>
+                         </div>
                     </div>
                 </div>
                 
@@ -628,9 +681,14 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                      </div>
 
                      <form id="form-compra-${cartaoId}" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                        <div class="md:col-span-4 lg:col-span-5">
+                        <div class="md:col-span-4 lg:col-span-3">
                             <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Descrição</label>
                             <input type="text" name="descricao-compra" class="w-full p-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none" placeholder="O que você comprou?" required>
+                        </div>
+
+                        <div class="md:col-span-2 lg:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" title="Quem deve pagar por isso?">De Quem?</label>
+                            <input type="text" name="dono-compra" value="Eu" class="w-full p-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none font-medium text-purple-600 dark:text-purple-400" placeholder="Ex: Eu, João..." required>
                         </div>
                         
                         <div class="md:col-span-3 lg:col-span-2">
@@ -718,6 +776,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                 
                 let faturaAtual = 0;
                 let limiteUsado = 0;
+                let resumoDonos = {}; // NOVO: Objeto para guardar os gastos de cada dono
                 const dataHoje = new Date();
                 const mesAtual = dataHoje.getMonth();
                 const anoAtual = dataHoje.getFullYear();
@@ -757,14 +816,25 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                         
                         if (mesVencimento === mesAtual && anoVencimento === anoAtual) {
                             faturaAtual += valorParcela;
+                            // NOVO: Adiciona ao resumo do dono
+                            const dono = compra.dono || 'Eu';
+                            resumoDonos[dono] = (resumoDonos[dono] || 0) + valorParcela;
                         }
                     }
+
+                    // NOVO: Badge visual do dono da compra
+                    const donoBadge = (compra.dono && compra.dono.toLowerCase() !== 'eu') 
+                        ? `<span class="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 text-[10px] px-2 py-0.5 rounded-full ml-2 shrink-0 border border-purple-200 dark:border-purple-800">${compra.dono}</span>` 
+                        : '';
 
                     const compraEl = document.createElement('div');
                     compraEl.className = 'flex justify-between items-center bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 hover:border-gray-200 transition-colors group';
                     compraEl.innerHTML = `
                         <div class="flex-1 min-w-0 pr-2">
-                            <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate" title="${compra.descricao}">${compra.descricao}</p>
+                            <div class="flex items-center">
+                                <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate" title="${compra.descricao}">${compra.descricao}</p>
+                                ${donoBadge}
+                            </div>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                 ${compra.parcelasTotal > 1 ? `${compra.parcelasTotal}x de ${formatarMoeda(valorParcela)}` : 'À vista'}
                             </p>
@@ -801,6 +871,36 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     if(percentualUsado > 90) barEl.className = 'bg-gradient-to-r from-red-500 to-red-400 h-full transition-all duration-1000';
                     else barEl.className = 'bg-gradient-to-r from-blue-500 to-cyan-400 h-full transition-all duration-1000';
                 }
+
+                // NOVO: Atualizar a visualização da divisão da fatura por donos
+                const resumoContainer = document.getElementById(`resumo-donos-${cartaoId}`);
+                const resumoLista = document.getElementById(`resumo-donos-lista-${cartaoId}`);
+                if (resumoContainer && resumoLista) {
+                    const donosChaves = Object.keys(resumoDonos);
+                    if (donosChaves.length > 1 || (donosChaves.length === 1 && donosChaves[0].toLowerCase() !== 'eu')) {
+                        resumoContainer.classList.remove('hidden');
+                        resumoLista.innerHTML = '';
+                        
+                        // Ordena para que "Eu" sempre apareça no topo
+                        donosChaves.sort((a, b) => {
+                            if (a.toLowerCase() === 'eu') return -1;
+                            if (b.toLowerCase() === 'eu') return 1;
+                            return a.localeCompare(b);
+                        });
+                        
+                        donosChaves.forEach(dono => {
+                            const isEu = dono.toLowerCase() === 'eu';
+                            resumoLista.innerHTML += `
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="${isEu ? 'text-gray-600 dark:text-gray-300 font-medium' : 'text-purple-600 dark:text-purple-400 font-semibold'}">${dono}</span>
+                                    <span class="font-bold text-gray-800 dark:text-gray-200">${formatarMoeda(resumoDonos[dono])}</span>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        resumoContainer.classList.add('hidden');
+                    }
+                }
             });
         }
 
@@ -819,6 +919,10 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
             if(cancelButton) cancelButton.classList.add('hidden');
             
             editingCompraState = { cartaoId: null, compraId: null };
+
+            // Reseta o dono para Eu
+            const donoInput = form.querySelector('[name="dono-compra"]');
+            if (donoInput) donoInput.value = 'Eu';
 
             // Força voltar ao modo Total
             const radioTotal = document.querySelector(`input[name="modo-compra-${cartaoId}"][value="total"]`);
@@ -845,6 +949,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     }
 
                     form.querySelector('[name="descricao-compra"]').value = data.descricao;
+                    form.querySelector('[name="dono-compra"]').value = data.dono || 'Eu';
                     form.querySelector('[name="valor-compra"]').value = data.valorTotal.toFixed(2);
                     form.querySelector('[name="parcelas-compra"]').value = data.parcelasTotal;
 
@@ -915,8 +1020,8 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     const row = e.target.closest('.preview-row');
                     if(e.target.checked) row.classList.remove('opacity-50', 'grayscale');
                     else row.classList.add('opacity-50', 'grayscale');
-                } else if (field === 'descricao') {
-                    importParsedItems[idx].descricao = e.target.value;
+                } else if (field === 'descricao' || field === 'dono') {
+                    importParsedItems[idx][field] = e.target.value;
                 } else if (field) {
                     importParsedItems[idx][field] = parseFloat(e.target.value) || 0;
                 }
@@ -979,7 +1084,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                 resto = resto.replace(/\s{2,}/g, ' ').replace(/[-–]\s*$/, '').trim(); // Limpeza extra
                 if (!resto) resto = 'Compra importada';
 
-                itens.push({ descricao: resto, valor, parcelaAtual, parcelasTotal, incluir: true });
+                itens.push({ descricao: resto, dono: 'Eu', valor, parcelaAtual, parcelasTotal, incluir: true });
             });
             return itens;
         }
@@ -1000,15 +1105,19 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     <div class="col-span-1 flex justify-center w-full md:w-auto mb-2 md:mb-0">
                         <input type="checkbox" data-idx="${idx}" class="import-check w-5 h-5 text-cyan-600 rounded bg-white border-gray-300 focus:ring-cyan-500" ${item.incluir ? 'checked' : ''}>
                     </div>
-                    <div class="col-span-5 w-full">
+                    <div class="col-span-4 w-full">
                         <label class="md:hidden text-xs font-bold text-gray-500 uppercase">Descrição</label>
                         <input type="text" data-idx="${idx}" data-field="descricao" value="${item.descricao.replace(/"/g, '&quot;')}" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 p-2 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div class="col-span-2 w-full">
+                        <label class="md:hidden text-xs font-bold text-gray-500 uppercase">De Quem?</label>
+                        <input type="text" data-idx="${idx}" data-field="dono" value="${item.dono}" class="w-full bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 font-semibold border border-purple-200 dark:border-purple-800 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-center" placeholder="Ex: Eu">
                     </div>
                     <div class="col-span-2 w-full flex items-center">
                         <span class="text-gray-500 mr-2 md:hidden">R$</span>
                         <input type="number" step="0.01" data-idx="${idx}" data-field="valor" value="${item.valor}" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 p-2 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500 text-right">
                     </div>
-                    <div class="col-span-4 w-full flex items-center gap-2">
+                    <div class="col-span-3 w-full flex items-center gap-2">
                         <input type="number" data-idx="${idx}" data-field="parcelaAtual" value="${item.parcelaAtual}" min="1" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 p-2 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500 text-center" title="Parcela Atual">
                         <span class="text-gray-400 font-bold">/</span>
                         <input type="number" data-idx="${idx}" data-field="parcelasTotal" value="${item.parcelasTotal}" min="1" class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 p-2 rounded-lg outline-none focus:ring-2 focus:ring-cyan-500 text-center" title="Total de Parcelas">
@@ -1054,6 +1163,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                     
                     const data = {
                         descricao: item.descricao,
+                        dono: item.dono || 'Eu',
                         // Na importação o valor costuma ser o da parcela atual. O sistema requer o total.
                         valorTotal: item.valor * parcelasTotal, 
                         parcelasTotal: parcelasTotal,
@@ -1094,6 +1204,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
                 const form = document.getElementById(`form-compra-${id}`);
                 const dataInicioValue = form.querySelector('input[name="data-inicio-compra"]').value;
                 const descricao = form.querySelector('input[name="descricao-compra"]').value;
+                const dono = form.querySelector('input[name="dono-compra"]').value.trim() || 'Eu';
                 
                 if (!descricao) { showToast("Preencha a descrição.", 'warning'); return; }
                 if (!dataInicioValue) { showToast('Selecione o mês.', 'warning'); return; }
@@ -1138,6 +1249,7 @@ APPLE.COM/BILL 03/12 49,90"></textarea>
 
                 const data = {
                     descricao,
+                    dono,
                     valorTotal,
                     parcelasTotal,
                     dataCompra: new Date(refYear, refMonthIdx, 2)
