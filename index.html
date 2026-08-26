@@ -27,42 +27,63 @@
     </script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white transition-colors duration-300">
-    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p class="text-white">A carregar...</p></div>
+    <div id="loader" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50"><p class="text-white text-lg font-semibold">A carregar...</p></div>
+
+    <!-- Modal de Autenticação (Login/Registro Embutido) -->
+    <div id="auth-modal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md m-4 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-2 text-center text-cyan-600 dark:text-cyan-400">Painel Financeiro</h2>
+            <p class="text-center text-gray-500 dark:text-gray-400 mb-6 text-sm">Faça login ou crie sua conta para continuar.</p>
+            
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm mb-1 font-medium">E-mail</label>
+                    <input type="email" id="auth-email" class="w-full p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="seu@email.com" required>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 font-medium">Senha</label>
+                    <input type="password" id="auth-password" class="w-full p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="••••••••" required minlength="6">
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-bold py-3 rounded-lg mt-4 transition-colors">Entrar / Registrar</button>
+                <p id="auth-error" class="text-red-500 text-sm mt-2 text-center hidden"></p>
+            </form>
+        </div>
+    </div>
 
     <div id="app-content" class="container mx-auto p-4 md:p-8 max-w-7xl hidden">
         <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
             <div>
                 <h1 class="text-2xl sm:text-3xl font-bold text-cyan-600 dark:text-cyan-400">Meu Painel Financeiro</h1>
-                <p class="text-gray-600 dark:text-gray-400">Olá, <span id="user-email"></span>!</p>
+                <p class="text-gray-600 dark:text-gray-400">Olá, <span id="user-email" class="font-medium"></span>!</p>
             </div>
             <div class="flex items-center gap-2 sm:gap-4">
-                <a href="detalhes.html" class="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg text-sm sm:text-base">Gerir Finanças &rarr;</a>
+                <a href="detalhes.html" class="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg text-sm sm:text-base transition-colors shadow-lg shadow-cyan-500/30">Gerir Finanças &rarr;</a>
                 
                 <!-- Gamification Popover -->
                 <div class="relative">
-                    <button id="toggle-gamification-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded-lg text-xl sm:text-2xl leading-none flex items-center justify-center">🏆</button>
+                    <button id="toggle-gamification-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-2 rounded-lg text-xl sm:text-2xl leading-none flex items-center justify-center transition-colors shadow-lg shadow-yellow-500/30">🏆</button>
                     
                     <div id="gamification-panel" class="hidden absolute right-0 mt-2 w-80 md:w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-30 p-4">
                         <div class="space-y-4">
                              <!-- Níveis de Jornada -->
                             <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-                                <h3 class="font-bold text-lg mb-2">📊 Níveis de Jornada</h3>
+                                <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-white">📊 Níveis de Jornada</h3>
                                 <div class="flex items-center gap-4">
                                     <span id="journey-level-icon" class="text-4xl"></span>
                                     <div>
-                                        <p id="journey-level-title" class="font-semibold"></p>
-                                        <p id="journey-level-message" class="text-sm text-gray-700 dark:text-gray-300 break-words"></p>
+                                        <p id="journey-level-title" class="font-semibold text-gray-800 dark:text-white"></p>
+                                        <p id="journey-level-message" class="text-sm text-gray-600 dark:text-gray-300 break-words"></p>
                                     </div>
                                 </div>
                             </div>
                             <!-- Conquistas de Economia -->
                             <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-                                <h3 class="font-bold text-lg mb-2">🏆 Conquistas de Economia</h3>
+                                <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-white">🏆 Conquistas de Economia</h3>
                                 <div class="flex items-center gap-4">
                                     <span id="savings-level-icon" class="text-4xl"></span>
                                     <div>
-                                        <p id="savings-level-title" class="font-semibold"></p>
-                                        <p id="savings-level-message" class="text-sm text-gray-700 dark:text-gray-300 break-words"></p>
+                                        <p id="savings-level-title" class="font-semibold text-gray-800 dark:text-white"></p>
+                                        <p id="savings-level-message" class="text-sm text-gray-600 dark:text-gray-300 break-words"></p>
                                     </div>
                                 </div>
                             </div>
@@ -72,62 +93,83 @@
 
                 <!-- Seletor de Tema -->
                 <div class="relative">
-                    <button id="theme-menu-button" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600">
+                    <button id="theme-menu-button" class="p-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
                     </button>
-                    <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20">
-                        <p class="p-3 text-sm font-semibold text-gray-500 dark:text-gray-400">Modo de Exibição</p>
-                        <button data-theme="dark" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Escuro</button>
-                        <button data-theme="light" class="theme-option w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Claro</button>
+                    <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-20 overflow-hidden">
+                        <p class="p-3 text-xs uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50">Modo de Exibição</p>
+                        <button data-theme="dark" class="theme-option w-full text-left px-4 py-3 text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">🌙 Modo Escuro</button>
+                        <button data-theme="light" class="theme-option w-full text-left px-4 py-3 text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">☀️ Modo Claro</button>
                     </div>
                 </div>
 
-                <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm sm:text-base">Sair</button>
+                <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm sm:text-base transition-colors shadow-lg shadow-red-500/30">Sair</button>
             </div>
         </header>
 
         <!-- Navegação de Mês -->
-        <div class="flex flex-wrap justify-center items-center gap-4 mb-8">
-            <button id="prev-month" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">&lt;</button>
-            <h2 id="current-month-year" class="text-xl sm:text-2xl font-bold text-center"></h2>
-            <button id="next-month" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">&gt;</button>
-            <div id="start-month-controls" class="ml-4">
-                <button id="set-start-month-btn" title="Definir este como o mês de início do seu controle" class="text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-2 rounded-lg">Definir como Início</button>
-                <button id="remove-start-month-btn" title="Remover a trava de mês inicial" class="hidden text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg">Remover Início</button>
+        <div class="flex flex-wrap justify-center items-center gap-4 mb-8 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 w-fit mx-auto">
+            <button id="prev-month" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center w-10 h-10 font-bold text-gray-600 dark:text-gray-300">&lt;</button>
+            <h2 id="current-month-year" class="text-xl sm:text-2xl font-bold text-center min-w-[200px] text-gray-800 dark:text-white capitalize"></h2>
+            <button id="next-month" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center w-10 h-10 font-bold text-gray-600 dark:text-gray-300">&gt;</button>
+            <div id="start-month-controls" class="ml-2 pl-4 border-l border-gray-200 dark:border-gray-700">
+                <button id="set-start-month-btn" title="Definir este como o mês de início do seu controle" class="text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium px-3 py-2 rounded-lg transition-colors">Definir como Início</button>
+                <button id="remove-start-month-btn" title="Remover a trava de mês inicial" class="hidden text-sm bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400 font-medium px-3 py-2 rounded-lg transition-colors">Remover Início</button>
             </div>
         </div>
 
         <!-- Resumo Financeiro -->
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl sm:text-2xl font-bold">Resumo Financeiro</h2>
-            <button id="toggle-resumo" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Resumo Financeiro</h2>
+            <button id="toggle-resumo" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-medium text-sm px-3 py-1 bg-cyan-50 dark:bg-cyan-900/20 rounded-full transition-colors">Ocultar</button>
         </div>
         <section id="resumo-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Total de Receitas</h3>
-                <p id="total-receitas" class="text-3xl sm:text-4xl font-bold text-green-500 dark:text-green-400">R$ 0,00</p>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center text-center">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Total de Receitas</h3>
+                <p id="total-receitas" class="text-3xl sm:text-4xl font-black text-green-500 dark:text-green-400">R$ 0,00</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Total de Despesas</h3>
-                <p id="total-despesas" class="text-4xl font-bold text-red-500 dark:text-red-400">R$ 0,00</p>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center text-center">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Total de Despesas</h3>
+                <p id="total-despesas" class="text-3xl sm:text-4xl font-black text-red-500 dark:text-red-400">R$ 0,00</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Saldo do Mês</h3>
-                <p id="saldo-mes" class="text-3xl sm:text-4xl font-bold">R$ 0,00</p>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Saldo do Mês</h3>
+                <p id="saldo-mes" class="text-3xl sm:text-4xl font-black">R$ 0,00</p>
+            </div>
+        </section>
+
+        <!-- NOVO: Divisão de Gastos -->
+        <div class="flex justify-between items-center mb-4 mt-10">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">👥</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Divisão de Gastos (De Quem?)</h2>
+            </div>
+            <button id="toggle-divisao" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-medium text-sm px-3 py-1 bg-cyan-50 dark:bg-cyan-900/20 rounded-full transition-colors">Ocultar</button>
+        </div>
+        <section id="divisao-container" class="mb-10">
+            <div id="lista-divisao-donos" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Os cartões de "Eu", "Cônjuge", etc. entrarão aqui automaticamente -->
             </div>
         </section>
         
         <!-- Cadastro de Renda -->
-        <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 mb-10">
              <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl sm:text-2xl font-bold">Adicionar Renda</h2>
-                <button id="toggle-renda" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Adicionar Renda</h2>
+                <button id="toggle-renda" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 font-medium text-sm px-3 py-1 bg-cyan-50 dark:bg-cyan-900/20 rounded-full transition-colors">Ocultar</button>
             </div>
             <div id="renda-container">
                 <form id="form-add-receita" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <div class="md:col-span-2"><label class="block text-sm mb-2">Descrição</label><input type="text" id="descricao-receita" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="Ex: Salário" required></div>
-                    <div><label class="block text-sm mb-2">Valor</label><input type="number" id="valor-receita" step="0.01" class="bg-gray-200 dark:bg-gray-700 w-full p-2.5 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="3000" required></div>
-                    <button type="submit" class="bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-600 text-white font-bold py-2.5 px-6 rounded-lg h-11">Adicionar</button>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Descrição</label>
+                        <input type="text" id="descricao-receita" class="bg-gray-100 dark:bg-gray-700 w-full p-3 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="Ex: Salário" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Valor</label>
+                        <input type="number" id="valor-receita" step="0.01" class="bg-gray-100 dark:bg-gray-700 w-full p-3 rounded-lg border-none focus:ring-2 focus:ring-cyan-500" placeholder="3000" required>
+                    </div>
+                    <button type="submit" class="bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-green-500/30 transition-colors">Adicionar Renda</button>
                 </form>
             </div>
         </section>
@@ -135,74 +177,78 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Coluna de Receitas e Despesas do Mês -->
             <div>
-                 <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold">Receitas do Mês</h3>
-                        <button id="toggle-lista-receitas" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                 <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 mb-8">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">Receitas do Mês</h3>
+                        <button id="toggle-lista-receitas" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-receitas-container">
-                        <div id="lista-receitas" class="space-y-3"></div>
+                        <div id="lista-receitas" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar"></div>
                     </div>
                 </section>
-                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold">Despesas do Mês (Geral)</h3>
-                        <button id="toggle-lista-despesas" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">Despesas Manuais</h3>
+                        <button id="toggle-lista-despesas" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-despesas-container">
-                        <div id="lista-despesas-mes" class="space-y-3"></div>
+                        <div id="lista-despesas-mes" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar"></div>
                     </div>
                 </section>
             </div>
             <!-- Coluna de Faturas e Empréstimos -->
              <div>
-                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold">Faturas de Cartão (Mês Atual)</h3>
-                        <button id="toggle-lista-faturas" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 mb-8">
+                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">Faturas de Cartão (Mês Atual)</h3>
+                        <button id="toggle-lista-faturas" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-faturas-container">
-                        <div id="lista-faturas" class="space-y-3"></div>
+                        <div id="lista-faturas" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar"></div>
                     </div>
                 </section>
-                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold">Parcelas de Empréstimos (Mês Atual)</h3>
-                        <button id="toggle-lista-emprestimos" class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 text-sm">Ocultar</button>
+                <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">Parcelas de Empréstimos</h3>
+                        <button id="toggle-lista-emprestimos" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm">Ocultar</button>
                     </div>
                     <div id="lista-emprestimos-container">
-                        <div id="lista-emprestimos" class="space-y-3"></div>
+                        <div id="lista-emprestimos" class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar"></div>
                     </div>
                 </section>
             </div>
         </div>
         
         <!-- Seção de Gráficos -->
-        <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                <h2 class="text-xl sm:text-2xl font-bold">Análise Gráfica</h2>
-                <div class="flex items-center gap-2 p-1 bg-gray-200 dark:bg-gray-700 rounded-lg">
-                    <button data-chart-type="composition" class="graph-btn graph-btn-active px-3 py-1 text-sm font-semibold rounded-md">Composição</button>
-                    <button data-chart-type="evolution" class="graph-btn px-3 py-1 text-sm font-semibold rounded-md">Evolução</button>
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-gray-100 dark:border-gray-700 pb-4">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Análise Gráfica</h2>
+                <div class="flex items-center gap-1 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
+                    <button data-chart-type="composition" class="graph-btn graph-btn-active px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Composição</button>
+                    <button data-chart-type="evolution" class="graph-btn px-4 py-1.5 text-sm font-semibold rounded-md transition-all text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Evolução</button>
                 </div>
             </div>
-            <div id="composition-chart-container">
-                <h3 class="text-center font-semibold mb-2">Composição das Despesas</h3>
-                 <div class="max-w-md mx-auto">
+            
+            <div id="composition-chart-container" class="py-4">
+                <h3 class="text-center font-semibold mb-4 text-gray-700 dark:text-gray-300">De onde vêm suas despesas?</h3>
+                 <div class="max-w-md mx-auto relative h-64 flex justify-center">
                     <canvas id="despesasChart"></canvas>
                 </div>
             </div>
-            <div id="evolution-chart-container" class="hidden">
-                 <div class="flex justify-between items-center mb-2">
-                     <h3 class="text-center font-semibold">Evolução Mensal</h3>
-                     <select id="evolution-range" class="bg-gray-200 dark:bg-gray-700 text-sm rounded-lg p-1 border-none focus:ring-2 focus:ring-cyan-500">
-                        <option value="3">3 meses</option>
-                        <option value="6" selected>6 meses</option>
-                        <option value="12">12 meses</option>
+            
+            <div id="evolution-chart-container" class="hidden py-4">
+                 <div class="flex justify-between items-center mb-6 px-2">
+                     <h3 class="font-semibold text-gray-700 dark:text-gray-300">Histórico de Saldo Mensal</h3>
+                     <select id="evolution-range" class="bg-gray-100 dark:bg-gray-700 text-sm font-medium rounded-lg p-2 border-none focus:ring-2 focus:ring-cyan-500 cursor-pointer text-gray-800 dark:text-white shadow-sm">
+                        <option value="3">Últimos 3 meses</option>
+                        <option value="6" selected>Últimos 6 meses</option>
+                        <option value="12">Últimos 12 meses</option>
                     </select>
                  </div>
-                 <div>
-                    <canvas id="evolucaoChart"></canvas>
+                 <div class="w-full overflow-x-auto">
+                    <div class="min-w-[600px] h-72">
+                        <canvas id="evolucaoChart"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -223,7 +269,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, query, where, getDocs, limit, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const app = initializeApp(firebaseConfig);
@@ -257,8 +303,11 @@
         
         const formatarMoeda = (valor) => (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+        // Listener de Autenticação
         onAuthStateChanged(auth, async user => {
             if (user) {
+                // Logado
+                document.getElementById('auth-modal').classList.add('hidden');
                 currentUserId = user.uid;
                 
                 const settingsRef = doc(db, "users", user.uid, "settings", "config");
@@ -267,32 +316,73 @@
                     financialStartDate = settingsSnap.data().startDate.toDate();
                 }
 
-                document.getElementById('user-email').textContent = user.email;
+                document.getElementById('user-email').textContent = user.email.split('@')[0];
                 setupPage();
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('app-content').classList.remove('hidden');
             } else {
-                window.location.href = 'login.html';
+                // Não logado, mostrar modal de autenticação em vez de redirecionar
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('app-content').classList.add('hidden');
+                document.getElementById('auth-modal').classList.remove('hidden');
+            }
+        });
+
+        // Handler do Formulário de Autenticação (Login ou Registro na mesma tela)
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const errorEl = document.getElementById('auth-error');
+            const btn = document.getElementById('auth-submit-btn');
+            
+            errorEl.classList.add('hidden');
+            btn.textContent = 'Processando...';
+            btn.disabled = true;
+
+            try {
+                // Tenta fazer login primeiro
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                // Se o usuário não existir (auth/user-not-found ou invalid-credential na v10), tenta criar conta
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-login-credentials') {
+                    try {
+                        await createUserWithEmailAndPassword(auth, email, password);
+                    } catch (regError) {
+                        errorEl.textContent = 'Erro ao criar conta: ' + regError.message;
+                        errorEl.classList.remove('hidden');
+                    }
+                } else {
+                    errorEl.textContent = 'Erro no login: Senha incorreta ou formato inválido.';
+                    errorEl.classList.remove('hidden');
+                }
+            } finally {
+                btn.textContent = 'Entrar / Registrar';
+                btn.disabled = false;
             }
         });
         
         function getChartFontColor() {
-            return document.documentElement.classList.contains('dark') ? '#e5e7eb' : '#374151';
+            return document.documentElement.classList.contains('dark') ? '#9ca3af' : '#4b5563'; // text-gray-400 / text-gray-600
         }
 
         function updateChartColors() {
             const fontColor = getChartFontColor();
             const borderColor = document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff';
+            const gridColor = document.documentElement.classList.contains('dark') ? '#374151' : '#e5e7eb';
             
             if (despesasChart) {
                 despesasChart.options.plugins.legend.labels.color = fontColor;
                 despesasChart.data.datasets[0].borderColor = borderColor;
+                despesasChart.data.datasets[0].hoverBorderColor = borderColor;
                 despesasChart.update();
             }
             if (evolucaoChart) {
                 evolucaoChart.options.plugins.legend.labels.color = fontColor;
                 evolucaoChart.options.scales.x.ticks.color = fontColor;
                 evolucaoChart.options.scales.y.ticks.color = fontColor;
+                evolucaoChart.options.scales.x.grid.color = gridColor;
+                evolucaoChart.options.scales.y.grid.color = gridColor;
                 evolucaoChart.update();
             }
         }
@@ -356,19 +446,61 @@
 
         function updateMonthDisplay() {
             const monthYear = currentDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-            document.getElementById('current-month-year').textContent = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+            document.getElementById('current-month-year').textContent = monthYear;
             fetchCurrentMonthData();
             updateNavigationButtonsState();
         }
 
         function initializePieChart() {
             const ctx = document.getElementById('despesasChart').getContext('2d');
-            despesasChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Gerais', 'Faturas', 'Empréstimos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ef4444', '#3b82f6', '#f59e0b'], borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } } } } });
+            despesasChart = new Chart(ctx, { 
+                type: 'doughnut', 
+                data: { 
+                    labels: ['Manuais/Gerais', 'Faturas', 'Empréstimos'], 
+                    datasets: [{ 
+                        data: [0, 0, 0], 
+                        backgroundColor: ['#f87171', '#38bdf8', '#fbbf24'], // red-400, light-blue-400, amber-400
+                        borderWidth: 4,
+                        borderRadius: 5,
+                        hoverOffset: 10
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { font: { size: 13, family: 'Inter' }, padding: 20 } },
+                        tooltip: { backgroundColor: 'rgba(17, 24, 39, 0.9)', titleFont: { size: 14, family: 'Inter' }, bodyFont: { size: 14, family: 'Inter', weight: 'bold' }, padding: 12, cornerRadius: 8 }
+                    } 
+                } 
+            });
         }
 
         function initializeBarChart() {
             const ctx = document.getElementById('evolucaoChart').getContext('2d');
-            evolucaoChart = new Chart(ctx, { type: 'bar', data: { labels: [], datasets: [ { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.7)', borderColor: '#10b981', borderWidth: 1 }, { label: 'Despesas', data: [], backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: '#ef4444', borderWidth: 1 } ] }, options: { responsive: true, scales: { y: {}, x: {} }, plugins: { legend: {} } } });
+            evolucaoChart = new Chart(ctx, { 
+                type: 'bar', 
+                data: { 
+                    labels: [], 
+                    datasets: [ 
+                        { label: 'Receitas', data: [], backgroundColor: 'rgba(52, 211, 153, 0.85)', hoverBackgroundColor: '#34d399', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.8 }, // emerald-400
+                        { label: 'Despesas', data: [], backgroundColor: 'rgba(248, 113, 113, 0.85)', hoverBackgroundColor: '#f87171', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.8 }  // red-400
+                    ] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: { 
+                        y: { beginAtZero: true, grid: { drawBorder: false }, ticks: { font: { family: 'Inter' } } }, 
+                        x: { grid: { display: false }, ticks: { font: { family: 'Inter', weight: '500' } } } 
+                    }, 
+                    plugins: { 
+                        legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', size: 13 } } },
+                        tooltip: { backgroundColor: 'rgba(17, 24, 39, 0.9)', titleFont: { size: 14, family: 'Inter' }, bodyFont: { size: 14, family: 'Inter' }, padding: 12, cornerRadius: 8 }
+                    } 
+                } 
+            });
         }
 
         async function checkUserActivity() {
@@ -432,6 +564,7 @@
             }
 
             setupToggle('toggle-resumo', 'resumo-container');
+            setupToggle('toggle-divisao', 'divisao-container'); // Ocultar/Mostrar Divisão de Gastos
             setupToggle('toggle-renda', 'renda-container');
             setupToggle('toggle-lista-receitas', 'lista-receitas-container');
             setupToggle('toggle-lista-despesas', 'lista-despesas-container');
@@ -485,6 +618,7 @@
             checkUserActivity().then(() => {
                 updateMonthDisplay();
                 fetchEvolutionData();
+                setTimeout(updateChartColors, 100); // Força cores certas no boot
             });
         }
 
@@ -506,7 +640,7 @@
                 }
 
                 const mes = date.getMonth(), ano = date.getFullYear();
-                labels.push(date.toLocaleString('pt-BR', { month: 'short' }));
+                labels.push(date.toLocaleString('pt-BR', { month: 'short' }).replace('.','').toUpperCase());
                 
                 const inicioMes = new Date(ano, mes, 1), fimMes = new Date(ano, mes + 1, 0);
                 
@@ -551,33 +685,66 @@
         function fetchCurrentMonthData() {
             if (!currentUserId) return;
             let totalReceitas = 0, totalDespesasGerais = 0, totalFaturas = 0, totalEmprestimos = 0;
+            
+            // NOVO: Agrupadores de gastos para identificar de quem são
+            let gastosGeraisDono = {}, gastosEmprestimosDono = {}, donosPorCartao = {};
+
             const mesAtual = currentDate.getMonth(), anoAtual = currentDate.getFullYear();
             const inicioMes = new Date(anoAtual, mesAtual, 1), fimMes = new Date(anoAtual, mesAtual + 1, 0);
 
+            // Receitas
             onSnapshot(query(collection(db, "users", currentUserId, "receitas"), where("data", ">=", inicioMes), where("data", "<=", fimMes)), s => {
                 const listaEl = document.getElementById('lista-receitas');
-                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400">Nenhuma receita este mês.</p>' : '';
+                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400 text-sm italic py-2">Nenhuma receita este mês.</p>' : '';
                 totalReceitas = 0;
-                s.docs.forEach(d => { totalReceitas += d.data().valor; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded"><span>${d.data().descricao}</span><span class="font-semibold text-green-600 dark:text-green-400">${formatarMoeda(d.data().valor)}</span></div>`; });
+                s.docs.forEach(d => { 
+                    totalReceitas += d.data().valor; 
+                    listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-lg border border-gray-100 dark:border-gray-600/50"><span class="text-sm font-medium">${d.data().descricao}</span><span class="font-bold text-green-600 dark:text-green-400">${formatarMoeda(d.data().valor)}</span></div>`; 
+                });
                 updateTotals();
             });
 
+            // Despesas
             onSnapshot(query(collection(db, "users", currentUserId, "despesas"), where("data", ">=", inicioMes), where("data", "<=", fimMes)), s => {
                 const listaEl = document.getElementById('lista-despesas-mes');
-                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400">Nenhuma despesa este mês.</p>' : '';
+                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400 text-sm italic py-2">Nenhuma despesa este mês.</p>' : '';
                 totalDespesasGerais = 0;
-                s.docs.forEach(d => { totalDespesasGerais += d.data().valor; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded"><span>${d.data().descricao}</span><span class="font-semibold text-red-600 dark:text-red-400">${formatarMoeda(d.data().valor)}</span></div>`; });
+                gastosGeraisDono = {}; // Limpa cálculos
+                
+                s.docs.forEach(d => { 
+                    const data = d.data();
+                    const dono = data.dono || 'Eu'; 
+                    
+                    totalDespesasGerais += data.valor; 
+                    gastosGeraisDono[dono] = (gastosGeraisDono[dono] || 0) + data.valor;
+                    
+                    const badge = dono.toLowerCase() !== 'eu' ? `<span class="bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-[10px] px-2 py-0.5 rounded-full ml-2 shadow-sm font-semibold">${dono}</span>` : '';
+                    listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-lg border border-gray-100 dark:border-gray-600/50"><div><span class="text-sm font-medium">${data.descricao}</span>${badge}</div><span class="font-bold text-red-600 dark:text-red-400">${formatarMoeda(data.valor)}</span></div>`; 
+                });
                 updateTotals();
             });
 
+            // Empréstimos
             onSnapshot(query(collection(db, "users", currentUserId, "emprestimos")), s => {
                 const listaEl = document.getElementById('lista-emprestimos');
-                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400">Nenhum empréstimo ativo.</p>' : '';
+                listaEl.innerHTML = s.empty ? '<p class="text-gray-500 dark:text-gray-400 text-sm italic py-2">Nenhum empréstimo ativo.</p>' : '';
                 totalEmprestimos = 0;
-                s.docs.forEach(d => { totalEmprestimos += d.data().valorParcela; listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded"><span>${d.data().nome}</span><span class="font-semibold text-red-600 dark:text-red-400">${formatarMoeda(d.data().valorParcela)}</span></div>`; });
+                gastosEmprestimosDono = {}; // Limpa cálculos
+                
+                s.docs.forEach(d => { 
+                    const data = d.data();
+                    const dono = data.dono || 'Eu';
+                    
+                    totalEmprestimos += data.valorParcela; 
+                    gastosEmprestimosDono[dono] = (gastosEmprestimosDono[dono] || 0) + data.valorParcela;
+                    
+                    const badge = dono.toLowerCase() !== 'eu' ? `<span class="bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-[10px] px-2 py-0.5 rounded-full ml-2 shadow-sm font-semibold">${dono}</span>` : '';
+                    listaEl.innerHTML += `<div class="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-lg border border-gray-100 dark:border-gray-600/50"><div><span class="text-sm font-medium">${data.nome}</span>${badge}</div><span class="font-bold text-red-600 dark:text-red-400">${formatarMoeda(data.valorParcela)}</span></div>`; 
+                });
                 updateTotals();
             });
 
+            // Cartões e Compras
             onSnapshot(query(collection(db, "users", currentUserId, "cartoes")), cartoesSnap => {
                 const listaEl = document.getElementById('lista-faturas');
                 const existingFaturas = new Set();
@@ -589,6 +756,8 @@
 
                     onSnapshot(query(collection(db, `users/${currentUserId}/cartoes/${cartao.id}/compras`)), comprasSnap => {
                         let faturaCartao = 0;
+                        let divisaoCartao = {}; // Adiciona quem gastou neste cartão
+
                         comprasSnap.docs.forEach(compraDoc => {
                             const compra = compraDoc.data();
                             if(!compra.dataCompra) return;
@@ -598,13 +767,22 @@
                                 if (dataCompra.getDate() > cartao.diaFechamento) { mesVencimento++; }
                                 mesVencimento += i;
                                 while (mesVencimento > 11) { mesVencimento -= 12; anoVencimento++; }
-                                if (mesVencimento === mesAtual && anoVencimento === anoAtual) { faturaCartao += valorParcela; }
+                                
+                                if (mesVencimento === mesAtual && anoVencimento === anoAtual) { 
+                                    faturaCartao += valorParcela; 
+                                    
+                                    const dono = compra.dono || 'Eu';
+                                    divisaoCartao[dono] = (divisaoCartao[dono] || 0) + valorParcela;
+                                }
                             }
                         });
+                        
+                        donosPorCartao[cartao.id] = divisaoCartao; // Salva o quanto cada um deve nesse cartão no mês
+
                         let el = document.getElementById(`fatura-${cartao.id}`);
                         if (!el) { el = document.createElement('div'); el.id = `fatura-${cartao.id}`; listaEl.appendChild(el); }
-                        el.className = 'flex justify-between items-center bg-gray-100 dark:bg-gray-700 p-2 rounded';
-                        el.innerHTML = `<span>${cartao.nome}</span><span class="font-semibold text-red-600 dark:text-red-400">${formatarMoeda(faturaCartao)}</span>`;
+                        el.className = 'flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-lg border border-gray-100 dark:border-gray-600/50 mb-2';
+                        el.innerHTML = `<span class="text-sm font-medium flex items-center gap-2"><span class="text-xl">💳</span> ${cartao.nome}</span><span class="font-bold text-red-600 dark:text-red-400">${formatarMoeda(faturaCartao)}</span>`;
                         recalcularTotalFaturas();
                     });
                 });
@@ -612,7 +790,7 @@
                 existingFaturas.forEach(id => document.getElementById(id)?.remove());
 
                 if (cartoesSnap.empty) { 
-                    listaEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Nenhum cartão.</p>';
+                    listaEl.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-sm italic py-2">Nenhum cartão cadastrado.</p>';
                     recalcularTotalFaturas(); 
                 } else if(listaEl.querySelector('[id^="fatura-"]') === null && !cartoesSnap.empty) {
                      listaEl.innerHTML = ''; 
@@ -659,21 +837,61 @@
             function updateTotals() {
                 const totalDespesas = totalDespesasGerais + totalFaturas + totalEmprestimos;
                 const saldo = totalReceitas - totalDespesas;
+                
+                // Atualiza Cards Principais
                 document.getElementById('total-receitas').textContent = formatarMoeda(totalReceitas);
                 document.getElementById('total-despesas').textContent = formatarMoeda(totalDespesas);
                 const saldoEl = document.getElementById('saldo-mes');
                 saldoEl.textContent = formatarMoeda(saldo);
-                saldoEl.className = `text-3xl sm:text-4xl font-bold ${saldo >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`;
+                saldoEl.className = `text-3xl sm:text-4xl font-black ${saldo >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`;
                 
+                // NOVO: Cálculo e Atualização Visual da Divisão de Gastos
+                let resumoDonos = {};
+                // Soma Manuais
+                Object.entries(gastosGeraisDono).forEach(([d, v]) => resumoDonos[d] = (resumoDonos[d] || 0) + v);
+                // Soma Emprestimos
+                Object.entries(gastosEmprestimosDono).forEach(([d, v]) => resumoDonos[d] = (resumoDonos[d] || 0) + v);
+                // Soma Faturas Cartoes
+                Object.values(donosPorCartao).forEach(divisao => {
+                    Object.entries(divisao).forEach(([d, v]) => resumoDonos[d] = (resumoDonos[d] || 0) + v);
+                });
+
+                const containerDonos = document.getElementById('lista-divisao-donos');
+                if (containerDonos) {
+                    containerDonos.innerHTML = '';
+                    // Organiza "Eu" primeiro
+                    const donosKeys = Object.keys(resumoDonos).sort((a,b) => a.toLowerCase() === 'eu' ? -1 : (b.toLowerCase() === 'eu' ? 1 : a.localeCompare(b)));
+                    
+                    if (donosKeys.length === 0) {
+                        containerDonos.innerHTML = '<p class="text-gray-500 dark:text-gray-400 col-span-full italic text-sm">Sem despesas registradas neste mês para dividir.</p>';
+                    } else {
+                        donosKeys.forEach(dono => {
+                            const isEu = dono.toLowerCase() === 'eu';
+                            // Cores Diferenciadas (Azul para mim, Roxo para terceiros)
+                            const corBadge = isEu ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300';
+                            const valor = resumoDonos[dono];
+                            
+                            containerDonos.innerHTML += `
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col items-center justify-center text-center shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden group">
+                                    <div class="absolute inset-0 bg-gradient-to-br ${isEu ? 'from-cyan-500/5 to-transparent' : 'from-purple-500/5 to-transparent'} opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <span class="${corBadge} text-xs uppercase tracking-wider font-bold px-3 py-1 rounded-full mb-3 truncate max-w-full shadow-sm">${dono}</span>
+                                    <span class="text-xl sm:text-2xl font-black ${isEu ? 'text-gray-800 dark:text-white' : 'text-purple-600 dark:text-purple-400'}">${formatarMoeda(valor)}</span>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+
+                // Atualiza Gráfico de Composição (Pizza)
                 if (despesasChart) {
                     despesasChart.data.datasets[0].data = [totalDespesasGerais, totalFaturas, totalEmprestimos];
                     updateChartColors();
                 }
                 
+                // Atualiza Painel de Nível
                 updateGamificationPanel(totalReceitas, saldo);
             }
         }
     </script>
 </body>
 </html>
-
